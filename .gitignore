@@ -1,2 +1,8 @@
 /.idea
 /.vs
+/wip
+/database_template.sql
+/TODO.txt
+/public_html.zip
+/public_html/.well-known
+/public_html/*.json

@@ -1,0 +1,16 @@
+POST /callback/asaas/notification.php HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+Connection: Close
+Accept-Encoding: gzip
+tracestate: 614116@nr=0-0-614116-578140888-3818c6468b1b5787-b7baf6e090775ad1-0-0.138345-1690413866775
+traceparent: 00-1404fd0adcd50baf570c20502e00af83-3818c6468b1b5787-00
+newrelic: eyJkIjp7ImFjIjoiNjE0MTE2IiwicHIiOjAuMTM4MzQ1LCJ0eCI6ImI3YmFmNmUwOTA3NzVhZDEiLCJ0aSI6MTY5MDQxMzg2Njc3NSwidHkiOiJBcHAiLCJpZCI6IjM4MThjNjQ2OGIxYjU3ODciLCJ0ciI6IjE0MDRmZDBhZGNkNTBiYWY1NzBjMjA1MDJlMDBhZjgzIiwic2EiOmZhbHNlLCJhcCI6IjU3ODE0MDg4OCJ9LCJ2IjpbMCwxXX0=
+Cache-Control: no-cache
+Pragma: no-cache
+User-Agent: Java/1.8.0_282
+Host: pagoupix.com.br
+Content-Length: 1232
+X-HTTPS: 1
+
+{"event":"PAYMENT_CREATED","payment":{"object":"payment","id":"pay_0335635516636339","dateCreated":"2023-07-26","customer":"cus_000054154438","paymentLink":null,"value":2,"netValue":2,"originalValue":null,"interestValue":null,"description":"Cobran\u00e7a gerada automaticamente a partir de Pix recebido.","billingType":"PIX","confirmedDate":"2023-07-26","pixTransaction":"f32921a2-a769-48f6-968e-a7911b3e2151","pixQrCodeId":"HYPERTRA00000105593787ASA","status":"RECEIVED","dueDate":"2023-07-26","originalDueDate":"2023-07-26","paymentDate":"2023-07-26","clientPaymentDate":"2023-07-26","installmentNumber":null,"invoiceUrl":"https://www.asaas.com/i/0335635516636339","invoiceNumber":"240815191","externalReference":null,"deleted":false,"anticipated":false,"anticipable":false,"creditDate":"2023-07-26","estimatedCreditDate":"2023-07-26","transactionReceiptUrl":"https://www.asaas.com/comprovantes/4197636789949073","nossoNumero":null,"bankSlipUrl":null,"lastInvoiceViewedDate":null,"lastBankSlipViewedDate":null,"discount":{"value":0.00,"limitDate":null,"dueDateLimitDays":0,"type":"FIXED"},"fine":{"value":0.00,"type":"PERCENTAGE"},"interest":{"value":0.00,"type":"PERCENTAGE"},"postalService":false,"custody":null,"refunds":null}}
