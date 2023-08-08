@@ -1,5 +1,9 @@
 <?php /** @noinspection DuplicatedCode */
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 @session_start();
 
 if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['captcha'])) {
@@ -12,8 +16,6 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['captcha'])
     if (isset($_POST['login_remember']) && $_POST['login_remember'] == 1) $saveLogin = true;
 
     require_once '../config.php';
-
-    if ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org') $key_secret = '6LfVAYcnAAAAAHldFQhyEydNNISW01kiTorEzQe9';
 
     $url_recaptcha_verify = "https://www.google.com/recaptcha/api/siteverify?secret=$key_secret&response=$captcha&remoteip={$_SERVER['REMOTE_ADDR']}";
     $resposta = json_decode(file_get_contents($url_recaptcha_verify));
