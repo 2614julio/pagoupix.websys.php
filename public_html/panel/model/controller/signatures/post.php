@@ -152,6 +152,8 @@ $columns = array(
     $whereAll = "client_id='".$_SESSION['CLIENT']['id']."'";
     
 
+    if (!isset($_GET['filter'])) $_GET['filter'] = 'all';
+    if (isset($_GET['filter']) && $_GET['filter'] == 'not_expire') $_GET['filter'] = 'all';
         
         if(isset($_GET['filter'])){
             

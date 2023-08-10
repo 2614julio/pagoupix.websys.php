@@ -53,9 +53,7 @@
                             <input type="checkbox" id="login_remember" class="flipswitch" />
                             <label style="cursor:pointer;" for="login_remember">Lembrar login</label>
                         </div>
-                        <div class="form-group"><?php
-                            if ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org')
-                                $key_site = '6LfVAYcnAAAAAMfF53LEzYWUDz1TXZJ4kiNFzWQP' ?>
+                        <div class="form-group">
                             <button data-sitekey="<?= $key_site; ?>" data-callback='login' type="button"
                                     class="g-recaptcha btn btn-lg btn-success" style="width:100%;" name="button">
                                 Entrar

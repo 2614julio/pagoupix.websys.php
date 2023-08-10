@@ -1,5 +1,7 @@
 <?php
 
+require_once '../../../../../vendor/autoload.php';
+
  @session_start();
 
   if(isset($_SESSION['CLIENT'], $_POST['type'])){
@@ -51,10 +53,11 @@
           $email->content    = $template_email;
           $email->params     = $parametros;
           $email->subject    = "Confirme seu endereço de e-mail - ".SITE_TITLE;
+
           $email->sendMail();
         
           if($email->erro){
-              echo json_encode(['erro' => true, 'message' => 'Desculpe, tente mais tarde.']);
+              echo json_encode(['erro' => false, 'message' => 'Desculpe, tente mais tarde.', 'reason' => $email->error_reason, 'content' => $email->content]);
           }else{
               echo json_encode(['erro' => false, 'confirmed_last' => 0, 'message' => 'Código enviado para seu e-mail']);
           }

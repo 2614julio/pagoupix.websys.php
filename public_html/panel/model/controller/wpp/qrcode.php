@@ -22,9 +22,9 @@
         if($instance_data){
 
           if($instance_data->client_id == $client_id){
-              
+
                // get status 
-               $status_instance = json_decode($wpp->getStatus($instance_data->name));
+              $status_instance = json_decode($wpp->getStatus($instance_data->name));
 
                if($status_instance->erro){
                    
@@ -60,7 +60,8 @@
       }
 
     } catch (\Exception $e) {
-      echo json_encode(['erro' => true, 'message' => 'Desculpe, tente mais tarde.']);
+      var_dump($e);
+      //echo json_encode(['erro' => true, 'message' => 'Desculpe, tente mais tarde.']);
     }
 
   }
