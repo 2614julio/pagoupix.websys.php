@@ -50,7 +50,7 @@
           <li><a href="#hero">Início</a></li>
           <li><a href="#about">Como funciona</a></li>
           <li><a href="#faq">Preço</a></li>
-          <li><a href="/panel" class="btn p-1" style="background-color: #5150d8;color:#fff; border-radius: 50px; min-width:140px; display: inline-block; padding: 14px 40px; transition: 0.3s;" > Painel <i class="fa-solid fa-arrow-right" width="24" height="24"></i> </a></li>
+          <li><a href="<?= SITE_URL ?>/panel" class="btn p-1" style="background-color: #5150d8;color:#fff; border-radius: 50px; min-width:140px; display: inline-block; padding: 14px 40px; transition: 0.3s;" > Painel <i class="fa-solid fa-arrow-right" width="24" height="24"></i> </a></li>
         </ul>
       </nav><!-- .navbar -->
 
@@ -358,7 +358,7 @@
             <li><a href="#">Início</a></li>
             <li><a href="#about">Como funciona</a></li>
             <li><a href="#">Termos de uso</a></li>
-            <li><a href="panel">Entrar</a></li>
+            <li><a href="<?= SITE_URL ?>panel">Entrar</a></li>
           </ul>
         </div>
 
