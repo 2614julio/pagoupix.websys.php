@@ -1,10 +1,8 @@
-<?php 
- 
-  if($mailVerify == 1){
-      echo '<script>history.go(-1);</script>';
-      exit;
-  }
- 
+<?php
+    if (isset($mailVerify) && $mailVerify == 1) {
+        echo '<script>history.go(-1);</script>';
+        exit;
+    }
  ?>
 <?php include_once 'inc/head.php'; ?>
 <body class="">
