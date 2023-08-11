@@ -1,23 +1,33 @@
 <div class="row">
-  <div class="col-12 text-center">
-    <img width="60%" src="assets/img/gateways/{{name}}.png" alt="">
-  </div>
-
-    <div class="col-12">
-      <form id="formGateway_{{name}}" action="" class="formGateway__" method="post">
-
-          <div class="form-group">
-            <label for="" class="label-control" >Access token</label>
-            <input class="form-control" type="text" placeholder="Access token" name="access_token" value="{{access_token}}">
-          </div>
-
-
-         <input type="hidden" name="public_key" value="{{public_key}}" >
-         <input type="hidden" name="name" value="{{name}}" >
-      </form>
+    <div class="col-12 text-center">
+        <img width="60%" src="assets/img/gateways/{{name}}.png" alt="">
     </div>
-
-  <div class="col-12 text-right">
-    <a data-gateway="{{name}}" onclick="gatewaysave('{{name}}');" class="btn btn-success text-white" >Salvar</a>
-  </div>
+    <div class="col-12">
+        <form id="formGateway_{{name}}" action="" class="formGateway__" method="post">
+            <div class="form-group">
+                <label for="access_token" class="label-control">Access token</label>
+                <input class="form-control" type="text" placeholder="Access token" id="access_token" name="access_token" value="{{access_token}}">
+            </div>
+            <div class="form-group position-relative">
+                <label for="auth_code" class="label-control">Codigo de Autenticação</label>
+                <input class="form-control" type="text" placeholder="Auth Code" id="auth_code" name="auth_code" value="{{access_token}}" disabled>
+                <button class="btn position-absolute" id="request-code" type="button" onclick="requestGatewayCode()"
+                        style="bottom: -4px; right: 4px; border-radius: 20px">Solicitar</button>
+            </div>
+            <input type="hidden" name="public_key" value="{{public_key}}" >
+            <input type="hidden" name="name" value="{{name}}" >
+        </form>
+    </div>
+    <div class="col-12 text-right">
+        <button data-gateway="{{name}}" id="save" onclick="gatewaysave('{{name}}');" class="btn btn-success text-white" disabled>
+            Salvar
+        </button>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('#auth_code').val('');
+            $('#save').prop('disabled', true);
+            $('#auth_code').prop('disabled', true);
+        })
+    </script>
 </div>

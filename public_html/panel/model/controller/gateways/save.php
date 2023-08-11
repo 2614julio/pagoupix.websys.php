@@ -19,7 +19,7 @@
         $dados   = (object)$dados;
         $json    = json_encode($dados);
 
-        if($options->editOption($dados->name,$json)){
+        if(isset($_SESSION['gateway_code_confirmation']) && $dados->auth_code == $_SESSION['gateway_code_confirmation'] && $options->editOption($dados->name,$json)){
           echo json_encode(['erro' => false, 'message' => 'Editado com sucesso!']);
         }else {
           echo json_encode(['erro' => true, 'message' => 'Desculpe, tente mais tarde']);
@@ -34,3 +34,4 @@
     }
 
   }
+if (isset($_SESSION['gateway_code_confirmation'])) unset($_SESSION['gateway_code_confirmation']);

@@ -1193,6 +1193,17 @@ $(function(){
 
     }
 
+    function requestGatewayCode() {
+        $.get('model/controller/gateways/requestCode.php', null, function(e) {
+            $('#auth_code').prop('disabled', false);
+            $('#save').prop('disabled', false);
+        }).done(function () {
+            nowuiDashboard.showNotification('success','bottom','right', 'Codigo requisitado com sucesso', 'now-ui-icons ui-1_bell-53');
+        }).fail(function() {
+            nowuiDashboard.showNotification('danger','bottom','right', 'Falha ao requisitar codigo', 'now-ui-icons ui-1_bell-53');
+        });
+    }
+
     $(".colcardpay").on('click', function(e){
       e.preventDefault();
       const gateway = $(this).attr('data-gateway');
