@@ -1170,13 +1170,30 @@ $(function(){
 
     });
 
-    function gatewaysave(gateway){
+    function auth2factor(code, save, params, loading, loaded) {
+        if (typeof loading == 'function') loading();
+        code(function() {
+            $.post(urlsite + '/panel/model/controller/get.php', {view: 'auth_modal'}, function(data) {
+                const obj = JSON.parse(data);
+                if (obj.erro) nowuiDashboard.showNotification('danger','bottom','right', data.message, 'now-ui-icons ui-1_bell-53');
+                else {
+                    let modal = $('#modalAuthCode')
+                    let html_content = b64DecodeUnicode(obj.html)
+                    $('#modalAuthCode .modal-body').html(html_content)
+                    $('#modalAuthCode button#save').click(() => save(params))
+                    modal.modal('show')
+                }
+                if (typeof loaded == 'function') loaded();
+            })
+        })
+    }
 
-      var formData = $("#formGateway_"+gateway).serialize();
-
-      const urlParams = new URLSearchParams(formData);
-      const entries   = urlParams.entries();
-      const params    = paramsToObject(entries);
+    function gatewaysave(gateway) {
+      const formData   = $("#formGateway_"+gateway).serialize();
+      const urlParams  = new URLSearchParams(formData);
+      const entries    = urlParams.entries();
+      const params     = paramsToObject(entries);
+      params.auth_code = localStorage.getItem('auth_code');
 
       $.post(urlsite + '/panel/model/controller/gateways/save.php', {params}, function(data){
         try {
@@ -1193,12 +1210,9 @@ $(function(){
 
     }
 
-    function requestGatewayCode() {
+    function requestGatewayCode(resolve) {
         $.get('model/controller/gateways/requestCode.php', null, function(e) {
-            $('#auth_code').prop('disabled', false);
-            $('#save').prop('disabled', false);
-        }).done(function () {
-            nowuiDashboard.showNotification('success','bottom','right', 'Codigo requisitado com sucesso', 'now-ui-icons ui-1_bell-53');
+            resolve();
         }).fail(function() {
             nowuiDashboard.showNotification('danger','bottom','right', 'Falha ao requisitar codigo', 'now-ui-icons ui-1_bell-53');
         });
@@ -1233,53 +1247,62 @@ $(function(){
     }
     
     $("#saveUser").on('click', function(e){
-        $("#saveUser").prop('disabled', true);
-        
-        var ddiObject = iti.getSelectedCountryData();
-        var ddi       = ddiObject.dialCode;
-        
-        var nome         = $("#nome").val();
-        var email        = $("#email").val();
-        var whatsapp     = ddi+$("#whatsapp").val();
-        var pass         = $("#pass").val();
-        var pass_confirm = $("#pass_confirm").val();
-        
-        if(pass != pass_confirm){
-           nowuiDashboard.showNotification('danger','bottom','right','As senhas são diferentes', 'now-ui-icons ui-1_bell-53');
-           $("#saveUser").prop('disabled', false);
-           return false;
-        }
-        
-        
-        const dadosJson = new Object();
-        dadosJson.nome = nome;
-        dadosJson.email = email;
-        dadosJson.whatsapp = whatsapp;
-        dadosJson.pass = pass;
-        dadosJson.pass_confirm = pass_confirm;
-    
-        var dados = JSON.stringify(dadosJson);
-        
-         $.post(urlsite + '/panel/model/controller/client/update.php',{dados}, function(data){
-           
-           $("#saveUser").prop('disabled', false);
 
-            try {
-               
-             var obj = JSON.parse(data);
-             
-             if(obj.erro){
-                 nowuiDashboard.showNotification('danger','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
-             }else{
-                 nowuiDashboard.showNotification('success','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
-             }
-             
-            } catch (e) {
-              nowuiDashboard.showNotification('danger','bottom','right','Desculpe, tente mais tarde', 'now-ui-icons ui-1_bell-53');
-            }
-            
-          });
-          
+        auth2factor(
+            requestGatewayCode, function() {
+                $("#saveUser").prop('disabled', true);
+
+                var ddiObject    = iti.getSelectedCountryData();
+                var ddi          = ddiObject.dialCode;
+
+                var nome         = $("#nome").val();
+                var email        = $("#email").val();
+                var whatsapp     = ddi+$("#whatsapp").val();
+                var pass         = $("#pass").val();
+                var pass_confirm = $("#pass_confirm").val();
+
+                if (pass !== pass_confirm) {
+                    nowuiDashboard.showNotification('danger','bottom','right','As senhas são diferentes', 'now-ui-icons ui-1_bell-53');
+                    $("#saveUser").prop('disabled', false);
+                    return false;
+                }
+
+                const dadosJson = {};
+
+                dadosJson.nome = nome;
+                dadosJson.email = email;
+                dadosJson.whatsapp = whatsapp;
+                dadosJson.pass = pass;
+                dadosJson.pass_confirm = pass_confirm;
+                dadosJson.auth_code = localStorage.getItem('auth_code');
+
+                var dados = JSON.stringify(dadosJson);
+
+                console.log()
+
+                $.post(urlsite + '/panel/model/controller/client/update.php', {dados}, function(data) {
+                    $("#saveUser").prop('disabled', false);
+                    try {
+                        let obj = JSON.parse(data);
+                        if (obj.erro) nowuiDashboard.showNotification('danger','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
+                        else nowuiDashboard.showNotification('success','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
+                    }
+                    catch (e) {
+                        nowuiDashboard.showNotification('danger','bottom','right','Desculpe, tente mais tarde', 'now-ui-icons ui-1_bell-53');
+                    }
+                });
+            }, '',
+            function() {
+
+            },
+            function() {
+
+            });
+
+        /*
+
+
+       */
     });
     
     

@@ -34,4 +34,4 @@
     }
 
   }
-if (isset($_SESSION['gateway_code_confirmation'])) unset($_SESSION['gateway_code_confirmation']);
+//if (isset($_SESSION['gateway_code_confirmation'])) unset($_SESSION['gateway_code_confirmation']);

@@ -47,7 +47,7 @@
         
         
 
-      if($client->editClient($dados)){
+      if(isset($_SESSION['gateway_code_confirmation']) && $dados->auth_code == $_SESSION['gateway_code_confirmation'] && $client->editClient($dados)){
         echo json_encode(['erro' => false, 'message' => 'Dados editado com sucesso!']);
       }else{
         echo json_encode(['erro' => true, 'message' => 'Desculpe, tente novamente mais tarde.']);
