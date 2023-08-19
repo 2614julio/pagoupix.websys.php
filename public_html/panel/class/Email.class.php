@@ -42,13 +42,13 @@ class Email extends Conn {
 
                 $mail->isSMTP();
                 $mail->SMTPAuth   = true;
-                $mail->Host       = 'mail.computatus.org';
-                $mail->Username   = 'mailler@computatus.org';
-                $mail->Password   = 'HzzABT9p5rifEwW';
+                $mail->Host       = 'mail.pagoupix.com.br';
+                $mail->Username   = 'pagoupix@pagoupix.com.br';
+                $mail->Password   = '{SnR&Oio6VAm';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                 $mail->Port       = 465;
 
-                $mail->setFrom('no-reply@pagoupix.com.br');
+                $mail->setFrom('pagoupix@pagoupix.com.br');
                 $mail->addAddress($this->to);
 
                 $mail->isHTML(true);

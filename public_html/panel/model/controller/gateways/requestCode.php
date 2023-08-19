@@ -23,7 +23,7 @@ class RequestCode extends Conn {
         $code_confirmation = $email->generateCode();
         $_SESSION['gateway_code_confirmation'] = $code_confirmation;
         $template_email = file_get_contents('../../../../templates_mail/request_code_gateway_mail.html');
-
+        $email->subject = 'Codigo de Autenticação';
         $email->from = array('name' => SITE_TITLE, 'email' => 'no-reply@'.parse_url(SITE_URL, PHP_URL_HOST));
         $email->to = $client_info->email;
         $email->content = $template_email;
