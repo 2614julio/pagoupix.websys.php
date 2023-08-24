@@ -1148,6 +1148,7 @@ function gatewaysave(gateway) {
       if(obj.erro){
         nowuiDashboard.showNotification('danger','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
       }else{
+        $('#modalGateway').modal('hide');
         nowuiDashboard.showNotification('success','bottom','right',obj.message, 'now-ui-icons ui-1_bell-53');
       }
     } catch (e) {
