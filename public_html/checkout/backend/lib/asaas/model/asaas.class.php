@@ -277,8 +277,78 @@
 
          $curl = curl_init();
 
+         if (!$this->payer || !$this->payer->nome || !$this->payer->cpf) exit;
+
          curl_setopt_array($curl, array(
-           CURLOPT_URL => 'https://www.asaas.com/api/v3/paymentLinks',
+             CURLOPT_URL => "https://www.asaas.com/api/v3/customers?cpfCnpj={$this->payer->cpf}",
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_ENCODING => '',
+             CURLOPT_MAXREDIRS => 10,
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_FOLLOWLOCATION => true,
+             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+             CURLOPT_CUSTOMREQUEST => 'GET',
+             CURLOPT_HTTPHEADER => array(
+                 'accept: application/json',
+                 'content-type: application/json',
+                 'access_token: '.$this->access_token
+             ),
+         ));
+
+         $response = curl_exec($curl);
+
+         $client_id = null;
+         if ($response) {
+             $response = json_decode($response);
+             if ($response && $response->totalCount > 0) {
+                 $client_id = $response->data[0]->id;
+             }
+         }
+
+         if (!$client_id) {
+             curl_setopt_array($curl, array(
+                 CURLOPT_URL => "https://www.asaas.com/api/v3/customers",
+                 CURLOPT_RETURNTRANSFER => true,
+                 CURLOPT_ENCODING => '',
+                 CURLOPT_MAXREDIRS => 10,
+                 CURLOPT_TIMEOUT => 0,
+                 CURLOPT_FOLLOWLOCATION => true,
+                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                 CURLOPT_CUSTOMREQUEST => 'POST',
+                 CURLOPT_POSTFIELDS => json_encode([
+                     "name" => $this->payer->nome,
+                     "cpfCnpj" => $this->payer->cpf,
+                 ]),
+                 CURLOPT_HTTPHEADER => array(
+                     'accept: application/json',
+                     'content-type: application/json',
+                     'access_token: '.$this->access_token
+                 ),
+             ));
+
+             $response = curl_exec($curl);
+             //var_dump($response);
+             //exit;
+
+             if ($response) {
+                 $response = json_decode($response);
+                 if ($response) {
+                     $client_id = $response->id;
+                 }
+             }
+         }
+
+         $data = '{
+           "customer": "'.$client_id.'",
+           "billingType": "BOLETO",
+           "value": '.$this->amount.',
+           "dueDate": '.date('Y-m-d', strtotime('+2 days')).',
+           "description": "'.$this->invoice_ref.'",
+           "externalReference": "'.$this->invoice_ref.'"
+         }';
+
+         curl_setopt_array($curl, array(
+           CURLOPT_URL => 'https://www.asaas.com/api/v3/payments',
            CURLOPT_RETURNTRANSFER => true,
            CURLOPT_ENCODING => '',
            CURLOPT_MAXREDIRS => 10,
@@ -286,23 +356,16 @@
            CURLOPT_FOLLOWLOCATION => true,
            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
            CURLOPT_CUSTOMREQUEST => 'POST',
-           CURLOPT_POSTFIELDS =>'{
-           "name": "'.$this->title.'",
-           "description": "'.$this->invoice_ref.'",
-           "value": '.$this->amount.',
-           "billingType": "BOLETO",
-           "chargeType": "DETACHED",
-           "dueDateLimitDays": 5,
-           "maxInstallmentCount": 1,
-           "notificationEnabled": true
-         }',
+           CURLOPT_POSTFIELDS => $data,
            CURLOPT_HTTPHEADER => array(
-             'Content-Type: application/json',
+             'accept: application/json',
+             'content-type: application/json',
              'access_token: '.$this->access_token
            ),
          ));
 
          $response = curl_exec($curl);
+
          curl_close($curl);
 
        try {
@@ -315,7 +378,8 @@
                
              self::setExtraInfo($response->id);
 
-             $this->boleto = $response->url;
+             $this->boleto = $response->bankSlipUrl;
+;
              return true;
 
            }else{

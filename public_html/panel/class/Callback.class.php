@@ -1,94 +1,84 @@
 <?php
 
-/**
+ /**
  * Callback
- * @property bool $erro
- *
- * @noinspection PhpUndefinedMethodInspection
- * @noinspection PhpUndefinedFieldInspection
  */
-class Callback extends Conn {
-
-    /**
-     * @var string
-     */
-    public $gateway;
-  
-    /**
-     * @var object
-     */
-    public $request;
-  
-    /**
-     * @var $erro
-     * @type boolean
-     */
-    public bool $erro;
-   
-    /**
-     * @var string
-     */
-    public $message_erro;
-   
-    /**
-     * @var object
-     */
-    public $invoice;
-   
-    /**
-     * @var string
-     */
-    public $reference;
-   
-    /**
-     * @var object
-     */
-    public $client;
-   
-    /**
-     * @var object
-     */
-    public $credentials;
-   
-    /**
-     * @var object
-     */
-    public $template_message;
-   
-    /**
-     * @var object
-     */
-    public $instance;
-
-    /**
-     * @var object
-     */
-    public $signature;
-   
-    /**
-     * @var object
-     */
-    public $plan;
-
-
-    /**
-     * @param $request
-     * @param $gateway
-     */
-    function __construct($request, $gateway) {
-      
-        $this->conn      = new Conn;
-        $this->pdo       = $this->conn->pdo();
+class Callback extends Conn{ 
     
-        $this->request  = (object)$request;
-        $this->gateway  = $gateway;
-        self::bodyToRequest();
+ 
+  /*
+   * @var string
+  */
+  public $gateway;
+  
+  /*
+   * @var object
+   */
+   public $request;
+  
+  /*
+   * @var boolean
+   */
+   public $erro;
+   
+   /*
+   * @var string
+  */
+   public $message_erro;
+   
+   /*
+   * @var object
+   */
+   public $invoice;
+   
+   /*
+   * @var string
+  */
+   public $reference;
+   
+   /*
+   * @var object
+   */
+   public $client;
+   
+   /*
+   * @var object
+   */
+   public $credentials;
+   
+   /*
+    * @var object
+    */
+   public $template_message;
+   
+    /*
+    * @var object
+    */
+   public $instance;
 
-        if(!isset($this->request->reference)){
+    /*
+    * @var object
+    */
+   public $signature;
+   
+    /*
+    * @var object
+    */
+   public $plan;
+
+  function __construct($request,$gateway){
+      
+    $this->conn      = new Conn;
+    $this->pdo       = $this->conn->pdo();
+    
+    $this->request  = (object)$request;
+    $this->gateway  = $gateway;
+    self::bodyToRequest();
+
+    if(!isset($this->request->reference)){
         $this->erro = true;
         $this->message_erro = "Reference not found";
-    }
-        else{
+    }else{
         
         $this->reference = $this->request->reference;
         
@@ -128,154 +118,23 @@ class Callback extends Conn {
             $this->message_erro = "Invoice not found";
         }
     }
-    }
 
-    /**
-     * @return false|void
-     */
-    public function callback() {
-        if ($this->erro) return false;
-        if ($this->gateway == "mercadopago") $this->mercadopago();
-        if ($this->gateway == "paghiper") $this->paghiper();
-        if ($this->gateway == "asaas") $this->asaas();
-        if ($this->gateway == "picpay") $this->picpay();
+  }
+
+    public function callback(){
+        
+       if($this->erro){ return false; }
+
+       if($this->gateway == "mercadopago"){  self::mercadopago(); }
+       if($this->gateway == "paghiper"){  self::paghiper(); }
+       if($this->gateway == "asaas"){  self::asaas(); }
+       if($this->gateway == "picpay"){  self::picpay(); }
+      
+      
         http_response_code(200);
         echo 'OK';
     }
-
-    /**
-     * @return false|void
-     * @noinspection SpellCheckingInspection
-     */
-    public function mercadopago() {
-        if (isset($this->request->collection_id)) :
-            $id = $this->request->collection_id;
-        elseif (isset($this->request->id)):
-            $id = $this->request->id;
-        endif;
-        if (isset($this->request->data_id)) $id = $this->request->data_id;
-        if (isset($this->credentials->access_token, $id)) {
-            try {
-                $curl = curl_init();
-                curl_setopt_array($curl, [
-                    CURLOPT_URL => 'https://api.mercadopago.com/v1/payments/'.$id,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_ENCODING => '',
-                    CURLOPT_MAXREDIRS => 10,
-                    CURLOPT_TIMEOUT => 0,
-                    CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                    CURLOPT_CUSTOMREQUEST => 'GET',
-                    CURLOPT_HTTPHEADER => [
-                        'Authorization: Bearer '.$this->credentials->access_token
-                    ]
-                ]);
-                $payment_info = json_decode(curl_exec($curl));
-                curl_close($curl);
-                file_put_contents('mp.json', json_encode($this->request));
-                $status = $payment_info->status;
-                //$ref    = $payment_info->external_reference;
-
-                if ($status == "approved" && $this->invoice->status != "approved") {
-                    $this->insertFila();
-                    $this->setSatus('approved');
-                }
-            }
-            catch (Exception $e) {
-                return false;
-            }
-        }
-    }
-
-    public function insertFila() {
-
-        //insert register log finances
-        self::insertRegisterFinances();
-
-        //renew is signature
-        self::renew();
-
-        // remove plan temp
-        self::removePlanTemp();
-
-        if ($this->template_message) {
-
-            if (isset($this->instance->name)) {
-
-                $dados                = new stdClass();
-                $dados->assinante_id  = $this->invoice->id_assinante;
-                $dados->client_id     = $this->invoice->client_id;
-                $dados->content       = $this->template_message->texto;
-                $dados->template_id   = $this->template_message->id;
-                $dados->instance_id   = $this->instance->name ? $this->instance->name : "null";
-                $dados->phone         = $this->signature->ddi.$this->signature->whatsapp;
-
-                $query = $this->pdo->prepare("INSERT INTO `fila` (assinante_id,client_id,content,template_id, instance_id, phone, important) VALUES (:assinante_id, :client_id, :content, :template_id, :instance_id, :phone, :important) ");
-                $query->bindValue(':assinante_id', $dados->assinante_id);
-                $query->bindValue(':client_id', $dados->client_id);
-                $query->bindValue(':content', $dados->content);
-                $query->bindValue(':template_id', $dados->template_id);
-                $query->bindValue(':instance_id', $dados->instance_id);
-                $query->bindValue(':phone', $dados->phone);
-                $query->bindValue(':important', 1);
-
-                if($query->execute()){
-                    return true;
-                }else{
-                    return false;
-                }
-
-            }
-
-        }
-
-    }
-
-    public function insertRegisterFinances() {
-
-        $valor_insert = $this->invoice->valor_register != NULL ? $this->invoice->valor_register : $this->invoice->value;
-        $info_juros   = $this->invoice->juros != NULL ? "Juros: R$ ". json_decode($this->invoice->juros)->valor_juros. "\nMulta: R$ ". json_decode($this->invoice->juros)->valor_multa ."\n" : "";
-
-        $query = $this->pdo->prepare("INSERT INTO `finances` (tipo,valor,caixa_id, client_id, obs) VALUES (:tipo, :valor, :caixa_id, :client_id, :obs) ");
-        $query->bindValue(':tipo', 'entrada');
-        $query->bindValue(':valor', $valor_insert);
-        $query->bindValue(':caixa_id', 0);
-        $query->bindValue(':client_id', $this->invoice->client_id);
-        $query->bindValue(':obs', $info_juros . "Fatura de R$ ".$this->invoice->value."\nFatura ID: #".$this->invoice->id."\nCliente: ".$this->signature->nome."\nPlano: ".$this->plan->nome);
-
-        if($query->execute()){
-
-            if($this->plan->custo != '0,00' && $this->plan->custo != '0'){
-
-                $query = $this->pdo->prepare("INSERT INTO `finances` (tipo,valor,caixa_id, client_id, obs) VALUES (:tipo, :valor, :caixa_id, :client_id, :obs) ");
-                $query->bindValue(':tipo', 'saida');
-                $query->bindValue(':valor', $this->plan->custo);
-                $query->bindValue(':caixa_id', 0);
-                $query->bindValue(':client_id', $this->invoice->client_id);
-                $query->bindValue(':obs', "Custo por assinante\nFatura de R$ ".$this->invoice->value."\nCusto de: ".$this->plan->custo."\nFatura ID: #".$this->invoice->id."\nCliente: ".$this->signature->nome."\nPlano: ".$this->plan->nome);
-
-                if($query->execute()){
-                    return true;
-                }else{
-                    return false;
-                }
-
-            }else{
-                return true;
-            }
-
-
-        }else{
-            return false;
-        }
-
-
-    }
-
-
-
-
-
+    
     public function picpay(){
 
         if(isset($this->credentials->x_picpay_token, $this->credentials->x_seller_token)){
@@ -415,7 +274,60 @@ class Callback extends Conn {
         
     }
 
-    public function bodyToRequest(){
+    public function mercadopago(){
+    
+          if(isset($this->request->collection_id)):
+             $id = $this->request->collection_id;
+          elseif(isset($this->request->id)):
+             $id = $this->request->id;
+          endif;
+          
+          if(isset($this->request->data_id)){
+              $id = $this->request->data_id;
+          }
+          
+          if(isset($this->credentials->access_token, $id)){
+              
+             try{
+                   $curl = curl_init();
+                   curl_setopt_array($curl, array(
+                   CURLOPT_URL => 'https://api.mercadopago.com/v1/payments/'.$id,
+                   CURLOPT_RETURNTRANSFER => true,
+                   CURLOPT_ENCODING => '',
+                   CURLOPT_MAXREDIRS => 10,
+                   CURLOPT_TIMEOUT => 0,
+                   CURLOPT_FOLLOWLOCATION => true,
+                   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                   CURLOPT_CUSTOMREQUEST => 'GET',
+                   CURLOPT_HTTPHEADER => array(
+                     'Authorization: Bearer '.$this->credentials->access_token
+                   ),
+                 ));
+                 
+                 $payment_info = json_decode(curl_exec($curl));
+                 curl_close($curl);
+                 
+                 file_put_contents('mp.json', json_encode($this->request));
+                 
+                 $status = $payment_info->status;
+                 //$ref    = $payment_info->external_reference;
+                 
+                  if($status == "approved" && $this->invoice->status != "approved"){
+                         self::insertFila();
+                         self::setSatus('approved');
+                  }
+                
+                 
+             }catch(\Exception $e){
+                 return false;
+             }
+             
+          }
+
+
+    }
+    
+      public function bodyToRequest(){
           
          try{
               $body = json_decode(file_get_contents('php://input'));
@@ -450,8 +362,9 @@ class Callback extends Conn {
          }
          
       }
-
-      public function renew(){
+      
+      
+     public function renew(){
             
             $array_clico = array(
                         'semana'    => '7 days',
@@ -489,7 +402,54 @@ class Callback extends Conn {
         }
     
     
+      public function insertRegisterFinances(){
+          
+          if (isset($this->invoice->id)) {
+            $query_consult = $this->pdo->query("SELECT * FROM `finances` WHERE fatura_id = '{$this->invoice->id}'");
+            $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
+            if (count($fetch_consult) > 0) return;
+          }
+          
+          $valor_insert = $this->invoice->valor_register != NULL ? $this->invoice->valor_register : $this->invoice->value;
+          $info_juros   = $this->invoice->juros != NULL ? "Juros: R$ ". json_decode($this->invoice->juros)->valor_juros. "\nMulta: R$ ". json_decode($this->invoice->juros)->valor_multa ."\n" : "";
+          
+          $query = $this->pdo->prepare("INSERT INTO `finances` (tipo,valor,caixa_id, client_id, obs, fatura_id) VALUES (:tipo, :valor, :caixa_id, :client_id, :obs, :fatura_id) ");
+          $query->bindValue(':tipo', 'entrada');
+          $query->bindValue(':valor', $valor_insert);
+          $query->bindValue(':caixa_id', 0);
+          $query->bindValue(':client_id', $this->invoice->client_id);
+          $query->bindValue(':obs', $info_juros . "Fatura de R$ ".$this->invoice->value."\nFatura ID: #".$this->invoice->id."\nCliente: ".$this->signature->nome."\nPlano: ".$this->plan->nome);
+          $query->bindValue(':fatura_id', $this->invoice->id);
 
+          if($query->execute()){
+            
+             if($this->plan->custo != '0,00' && $this->plan->custo != '0'){
+                  
+                  $query = $this->pdo->prepare("INSERT INTO `finances` (tipo,valor,caixa_id, client_id, obs) VALUES (:tipo, :valor, :caixa_id, :client_id, :obs) ");
+                  $query->bindValue(':tipo', 'saida');
+                  $query->bindValue(':valor', $this->plan->custo);
+                  $query->bindValue(':caixa_id', 0);
+                  $query->bindValue(':client_id', $this->invoice->client_id);
+                  $query->bindValue(':obs', "Custo por assinante\nFatura de R$ ".$this->invoice->value."\nCusto de: ".$this->plan->custo."\nFatura ID: #".$this->invoice->id."\nCliente: ".$this->signature->nome."\nPlano: ".$this->plan->nome);
+        
+                  if($query->execute()){
+                    return true;
+                  }else{
+                    return false;
+                  }
+              
+             }else{
+                 return true;
+             }
+            
+            
+          }else{
+            return false;
+          }
+          
+
+      }
+      
       public function removePlanTemp(){
           $plan_info = self::getPlanInvoice();
           if($plan_info){
@@ -499,7 +459,49 @@ class Callback extends Conn {
           }
       }
         
-
+      public function insertFila(){
+          
+          //insert register log finances
+          self::insertRegisterFinances();
+          
+          //renew is signature
+          self::renew();
+          
+          // remove plan temp
+          self::removePlanTemp();
+  
+          if($this->template_message){
+              
+              if(isset($this->instance->name)){
+                      
+                      $dados                = new stdClass();
+                      $dados->assinante_id  = $this->invoice->id_assinante;
+                      $dados->client_id     = $this->invoice->client_id;
+                      $dados->content       = $this->template_message->texto;
+                      $dados->template_id   = $this->template_message->id;
+                      $dados->instance_id   = $this->instance->name ? $this->instance->name : "null";
+                      $dados->phone         = $this->signature->ddi.$this->signature->whatsapp;
+                      
+                      $query = $this->pdo->prepare("INSERT INTO `fila` (assinante_id,client_id,content,template_id, instance_id, phone, important) VALUES (:assinante_id, :client_id, :content, :template_id, :instance_id, :phone, :important) ");
+                      $query->bindValue(':assinante_id', $dados->assinante_id);
+                      $query->bindValue(':client_id', $dados->client_id);
+                      $query->bindValue(':content', $dados->content);
+                      $query->bindValue(':template_id', $dados->template_id);
+                      $query->bindValue(':instance_id', $dados->instance_id);
+                      $query->bindValue(':phone', $dados->phone);
+                      $query->bindValue(':important', 1);
+                
+                      if($query->execute()){
+                        return true;
+                      }else{
+                        return false;
+                      }
+                  
+                }
+                 
+             }
+        
+        }
 
         
     public function getInstanceByClient(){

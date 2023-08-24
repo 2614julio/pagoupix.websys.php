@@ -5,17 +5,17 @@
     <div class="col-12">
         <form id="formGateway_{{name}}" action="" class="formGateway__" method="post">
             <div class="form-group">
-                <label for="" class="label-control" >API Key</label>
-                <input class="form-control" type="text" placeholder="API Key" name="access_token" value="{{access_token}}">
+                <label for="access_token" class="label-control" >API Key</label>
+                <input id="access_token" class="form-control" type="text" placeholder="API Key" name="access_token" value="{{access_token}}">
             </div>
             <div class="form-group">
-                <label for="" class="label-control" >Chave pix</label>
-                <input class="form-control" type="text" placeholder="Chave pix" name="addressKey" value="{{addressKey}}">
+                <label for="address_key" class="label-control" >Chave pix</label>
+                <input id="address_key" class="form-control" type="text" placeholder="Chave pix" name="addressKey" value="{{addressKey}}">
                 <small>Obrigatório para usar pix no checkout</small>
             </div>
             <div class="form-group" style="display: none">
-                <label for="" class="label-control" >Webhook</label>
-                <input class="form-control" type="text" placeholder="Webhook" disabled name="webhook" value="SITE_URL/callback/asaas/notification.php">
+                <label for="webhook" class="label-control" >Webhook</label>
+                <input id="webhook" class="form-control" type="text" placeholder="Webhook" disabled name="webhook" value="SITE_URL/callback/asaas/notification.php">
                 <small>Adicione o weebhook em sua conta Asaas para "Webhook para cobranças"</small>
             </div>
             <input type="hidden" name="name" value="{{name}}" >

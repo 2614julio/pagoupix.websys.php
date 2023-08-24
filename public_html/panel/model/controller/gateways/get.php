@@ -3,15 +3,11 @@
 
 if (isset($_SESSION['CLIENT'])) {
     $client_id = trim($_SESSION['CLIENT']['id']);
-
     try {
-
         require_once '../../../config.php';
         require_once '../../../class/Conn.class.php';
         require_once '../../../class/Options.class.php';
-
         $options = new Options($client_id);
-
         if (isset($_POST['gateway'])) {
             if ($_POST['gateway'] != '') {
                 $gateway = trim($_POST['gateway']);

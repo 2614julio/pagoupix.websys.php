@@ -20,7 +20,7 @@
         if($_GET['type'] == "file"){
             
             $file_locale    = base64_decode($_GET['open']);
-            $dados_config   = str_replace(['<', '>'], ['&lt;', '&gt;'], file_get_contents($file_locale));
+            $dados_config   = str_replace(['<', '>'], ['<', '>'], file_get_contents($file_locale));
             $nameFile       = dirname(base64_decode($_GET['open'])).'/'.basename(base64_decode($_GET['open']));
             $explo_typeFile = explode('.', $file_locale);
             $type_file      = end($explo_typeFile) == "js" ? "javascript" : end($explo_typeFile);
@@ -259,7 +259,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; parceiro cobrei.vc</span>
+                        <span>Copyright © parceiro pagoupix</span>
                     </div>
                 </div>
             </footer>

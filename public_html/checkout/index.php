@@ -120,8 +120,8 @@
               'cpf'   => 0
             ),
             'boleto' => array(
-              'email' => 0,
-              'cpf'   => 0
+              'email' => 1,
+              'cpf'   => 1
             )
           ),
 

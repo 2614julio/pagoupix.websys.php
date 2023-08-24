@@ -36,7 +36,7 @@ class Email extends Conn {
         $cabecalhos .= 'Content-type: text/html; charset=utf-8' . "\r\n";
         $cabecalhos .= 'From: '.$this->from['name'].' <'.$this->from['email'].'>' . "\r\n";
 
-        if (in_array($_SERVER['SERVER_NAME'], ['localhost', 'pagoupix.computatus.org'])) {
+        if (in_array($_SERVER['SERVER_NAME'], ['localhost', 'pagoupix.computatus.org', 'pagoupix.com.br'])) {
             $mail = new PHPMailer(true);
             try {
 

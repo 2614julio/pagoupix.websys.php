@@ -1,9 +1,5 @@
 <?php /** @noinspection DuplicatedCode */
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 @session_start();
 
 if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['captcha'])) {
@@ -30,9 +26,7 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['captcha'])
             $getClient = $client->getClientByEmail($email);
 
             if ($getClient) {
-
                 $senha = $_POST['senha'];
-
                 if (password_verify($senha, $getClient->senha)) {
 
                     $_SESSION['CLIENT']['id'] = $getClient->id;
@@ -46,7 +40,6 @@ if (isset($_POST['email']) && isset($_POST['senha']) && isset($_POST['captcha'])
                         $client->updateTokenLogin($getClient->id,$tokenLoginHash);
                         setcookie('login_cobreivc', $tokenLoginHash, strtotime("+1 year"), "/");
                     }
-
                     die;
                 }
                 else {

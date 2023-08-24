@@ -37,7 +37,7 @@
 
   }else{
 
-    header('Location: https://cobrei.vc/panel/');
+    header('Location: https://pagoupix.com.br/panel/');
 
   }
 
