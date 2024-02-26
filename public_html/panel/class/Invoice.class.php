@@ -13,9 +13,12 @@ class Invoice extends Conn{
   }
 
     public function addInvoice($dados, $lastid = false, $templates = NULL){
+        
+      $dados->expire_date = !isset($dados->expire_date) ? NULL : $dados->expire_date;
 
-      $query = $this->pdo->prepare("INSERT INTO `invoices` (id_assinante,status,value,plan_id,client_id,ref) VALUES (:id_assinante, :status, :value, :plan_id, :client_id, :ref) ");
+      $query = $this->pdo->prepare("INSERT INTO `invoices` (id_assinante,expire_date,status,value,plan_id,client_id,ref) VALUES (:id_assinante, :expire_date, :status, :value, :plan_id, :client_id, :ref) ");
       $query->bindValue(':id_assinante', $dados->id_assinante);
+      $query->bindValue(':expire_date', $dados->expire_date);
       $query->bindValue(':status', $dados->status);
       $query->bindValue(':value', $dados->value);
       $query->bindValue(':plan_id', $dados->plan_id);

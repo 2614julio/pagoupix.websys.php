@@ -269,9 +269,6 @@ class Callback extends Conn{
             
         }
         
-
-        
-        
     }
 
     public function mercadopago(){
@@ -331,20 +328,31 @@ class Callback extends Conn{
           
          try{
               $body = json_decode(file_get_contents('php://input'));
-              
-
+            
               if($this->gateway == "asaas"){
-             
-                if(isset($body->payment->pixQrCodeId)){
-                    $invoice_extra = $body->payment->pixQrCodeId;
-                }else{
-                    $invoice_extra = $body->payment->paymentLink;
+                  
+                $ref = false;
+            
+                if(isset($body->payment->billingType)){
+                    
+                    if($body->payment->billingType == "BOLETO"){
+                        $invoice_extra = $body->payment->id;
+                        $getInvoiceExtra = self::getInvoiceByExtra($invoice_extra);
+                        $ref = $getInvoiceExtra ? $getInvoiceExtra->ref : false;
+                    }else if($body->payment->billingType == "CREDIT_CARD"){
+                        $invoice_extra      = $body->payment->paymentLink;
+                        $getInvoiceExtra    = self::getInvoiceByExtra($invoice_extra);
+                        $ref = $getInvoiceExtra ? $getInvoiceExtra->ref : false;
+                    }else{
+                        $invoice_extra = $body->payment->pixQrCodeId;
+                        $getInvoiceExtra = self::getInvoiceByExtra($invoice_extra);
+                        $ref = $getInvoiceExtra ? $getInvoiceExtra->ref : false;
+                    }
+                    
                 }
-                 
-                $getInvoiceExtra = self::getInvoiceByExtra($invoice_extra);
- 
-                if($getInvoiceExtra){
-                    $body->reference = $getInvoiceExtra->ref;
+            
+                if($ref){
+                    $body->reference = $ref;
                 }
                  
               }
@@ -354,9 +362,6 @@ class Callback extends Conn{
               $narray        = array_merge($body, $request);
               $this->request = (object)$narray; 
                   
-              
-          
-              
          }catch(\Exception $e){
              return false;
          }

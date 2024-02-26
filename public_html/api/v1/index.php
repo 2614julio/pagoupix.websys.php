@@ -32,7 +32,9 @@
 
               $headers    = getallheaders();
               $class_open = new $classe($headers['Access-token']);
+             
               $execute    = $class_open->$metodo($headers,$params);
+              
               echo $execute;
 
             } catch (\Exception $e) {

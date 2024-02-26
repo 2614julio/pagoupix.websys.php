@@ -19,8 +19,15 @@
      $options_charge->hours_charge      = '12-16';
      $options_charge->days_antes_charge = '0';
      $options_charge->wpp_charge        = '0';
+     $options_charge->expire_date_days  = '7';
   }else{
-      $options_charge = json_decode($options_charge);
+      
+     $options_charge = json_decode($options_charge);
+      
+     if(!isset($options_charge->expire_date_days)){
+         $options_charge->expire_date_days = '7';
+     }
+
   }
   
   if(!$options_charge_last){
@@ -78,7 +85,7 @@
              </div>
             <?php } ?>
 
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-12 col-md-12">
                 <div class="card" >
 
                   <div class="card-body">
@@ -105,7 +112,7 @@
                             <p style="font-size:12px;" >Cortesia de <a href="https://cron-job.org" target="_blank" >cron-job.org <i class="fa fa-heart"></i> </a>  </p>
                         </div>
                         
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
                             <div class="form-group">
                                 <label>Verificar cobranças</label>
@@ -123,7 +130,7 @@
                             </div>
                         </div>
                         
-                         <div class="col-md-3">
+                         <div class="col-md-4">
                              <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
                             <div class="form-group">
                                 <label>Horário</label>
@@ -136,7 +143,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
                             <div class="form-group">
                                 <label>Cobrança antecipada</label>
@@ -153,7 +160,21 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-3">
+                         <div class="col-md-4">
+                            <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                            <div class="form-group">
+                                <label>Tempo para fatura expirar após ser gerada</label>
+                                <select id="expire_date_days" class="form-control">
+                                    
+                                    <?php for ($i = 1; $i <= 31; $i++) { ?>
+                                         <option <?php if($options_charge->expire_date_days == $i){ echo 'selected'; } ?> value="<?= $i; ?>" ><?= $i . ($i > 1 ? ' dias' : ' dia'); ?></option>
+                                    <?php } ?>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
                             <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
                             <div class="form-group">
                                 <label>Whatsapp de cobrança</label>
@@ -185,7 +206,7 @@
                 </div>
             </div>
             
-            <div class="col-lg-6 col-md-12" >
+            <div class="col-lg-12 col-md-12" >
                 <div class="card">
                     <div class="card-body">
                         

@@ -2,15 +2,14 @@
 
 date_default_timezone_set('America/Sao_Paulo');
 
-if ($_SERVER['SERVER_NAME'] == 'localhost') {
+if ($_SERVER['SERVER_NAME'] == 'pagou.pix') {
     $dirname = ((object) pathinfo($_SERVER['SCRIPT_NAME']))->dirname;
     $dirname = str_replace('/panel', '', $dirname);
-    define('SITE_URL', 'http://'.$_SERVER['SERVER_NAME'] . $dirname);
-}
-elseif ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org')
+    define('SITE_URL', 'http://' . $_SERVER['SERVER_NAME'] . $dirname);
+} elseif ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org')
     define('SITE_URL', 'https://pagoupix.computatus.org');
 else define('SITE_URL', 'https://pagoupix.com.br');
-    
+
 define('FORM_URL', 'https://form.pagoupix.com.br');
 define('SITE_TITLE', 'Pagou Pix');
 $url_system = SITE_URL . '/';
@@ -33,18 +32,18 @@ define('BENIFICIARIO_PIX', 'hyper tracker');
 
 //cores do site
 
-define('SIDEBAR_COR','#071332'); //blue | green | orange | red | yellow ou hexadecimal //  --cor sidebar
+define('SIDEBAR_COR', '#071332'); //blue | green | orange | red | yellow ou hexadecimal //  --cor sidebar
 //define('SIDEBAR_COR','#07121a'); //blue | green | orange | red | yellow ou hexadecimal //  --cor sidebar
 
-define('SIDEBAR_OPC_COR','#114DE6');  // hexadecimal //  --cor opcoes menu
+define('SIDEBAR_OPC_COR', '#114DE6');  // hexadecimal //  --cor opcoes menu
 //define('SIDEBAR_OPC_COR','#01998e');  // hexadecimal //  --cor opcoes menu
 
-define('SIDEBAR_LINK_COR','#FFFFFF');  // hexadecimal //  --cor opcoes menu
+define('SIDEBAR_LINK_COR', '#FFFFFF');  // hexadecimal //  --cor opcoes menu
 
-define('COR_HEAD_1','#3320A8');  // hexadecimal // --cor head panel
+define('COR_HEAD_1', '#3320A8');  // hexadecimal // --cor head panel
 //define('COR_HEAD_1','#01423d');  // hexadecimal // --cor head panel
 
-define('COR_HEAD_2','#071332');  // hexadecimal // --cor head panel
+define('COR_HEAD_2', '#071332');  // hexadecimal // --cor head panel
 //define('COR_HEAD_2','#07121a');  // hexadecimal // --cor head panel
 
 // extensao do audio gravado pelo user (nao mexer)
@@ -59,49 +58,53 @@ define('AUTH_G_CLIENT_SECRET', '');
 define('KEY_CHECKOUT', '832YBVE78204POXSV23-34987OPEVX83920-X$SD09878X-22WS-23894765XCZXWQ435HTER564');
 
 // recapctha google
-if ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org') {
-    $key_site = '6LfVAYcnAAAAAMfF53LEzYWUDz1TXZJ4kiNFzWQP';
-    $key_secret = '6LfVAYcnAAAAAHldFQhyEydNNISW01kiTorEzQe9';
-}
-else {
-    $key_site = '6Lf1Y9kaAAAAAIiaH283UrUTzM0UgxZ529fWvsqv';
-    $key_secret = '6Lf1Y9kaAAAAAFYa2xfLE-0l8jw9_DaVvYtQ2IQN';
+if ($_SERVER['SERVER_NAME'] != 'pagou.pix') {
+    if ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org') {
+        $key_site = '6LfVAYcnAAAAAMfF53LEzYWUDz1TXZJ4kiNFzWQP';
+        $key_secret = '6LfVAYcnAAAAAHldFQhyEydNNISW01kiTorEzQe9';
+    } else {
+        $key_site = '6Lf1Y9kaAAAAAIiaH283UrUTzM0UgxZ529fWvsqv';
+        $key_secret = '6Lf1Y9kaAAAAAFYa2xfLE-0l8jw9_DaVvYtQ2IQN';
+    }
+} else {
+    $key_site = '6LfWa3cpAAAAABybNzcFXVHnTIUHf-1a4jQKRSoK';
+    $key_secret = '6LfWa3cpAAAAAPwO6vn8Lcqs2j4isEnFaA3dcWXa';
 }
 
-function due_date($expire,$html=true){
+function due_date($expire, $html = true)
+{
     $now = strtotime('now');
-    
-    if($now > $expire){
-        if($html): 
+
+    if ($now > $expire) {
+        if ($html) :
             echo '<div class="blocked_sig" >Sua assinatura está expirada! Faça a renovação da sua assinatura <br /> <a class="btn_renew" href="buy" > <i class="fa fa-refresh" ></i> Renovar</a></div>';
-        else:
-            echo json_encode(['erro' => true, 'message' => 'Sua assinatura está expirada!']);    
+        else :
+            echo json_encode(['erro' => true, 'message' => 'Sua assinatura está expirada!']);
         endif;
-        
     }
 }
-    
-    
-function due_date_sidebar($expire){
+
+
+function due_date_sidebar($expire)
+{
     $now = strtotime('now');
-    if($expire > $now){
-        
+    if ($expire > $now) {
+
         $d = "dia";
         for ($i = 0; $i <= DAYS_DUE; $i++) {
-            if($i >  1){
+            if ($i >  1) {
                 $d = "dias";
             }
-            $due = strtotime('+'.$i.' days', $now);
-            if(date('d/m/Y', $due) == date('d/m/Y', $expire)){
-                echo '<a href="buy" ><div style="cursor:pointer;margin: 20px;background-color: #f85a40;padding: 5px;border-radius: 7px;color: #FFF;">Faltam '.$i .' '. $d .' para o vencimento da sua assinatura</div></a>';
+            $due = strtotime('+' . $i . ' days', $now);
+            if (date('d/m/Y', $due) == date('d/m/Y', $expire)) {
+                echo '<a href="buy" ><div style="cursor:pointer;margin: 20px;background-color: #f85a40;padding: 5px;border-radius: 7px;color: #FFF;">Faltam ' . $i . ' ' . $d . ' para o vencimento da sua assinatura</div></a>';
             }
-            
         }
-        
     }
 }
-        
-function listarArquivos($diretorio, $caminhoBase = '') {
+
+function listarArquivos($diretorio, $caminhoBase = '')
+{
     $pastas = array();
     $arquivos = array();
 
@@ -119,7 +122,7 @@ function listarArquivos($diretorio, $caminhoBase = '') {
                         $arquivos[] = $diretorio . "/" . $item;
                     } elseif (is_dir($diretorio . "/" . $item)) {
                         // Adiciona a subpasta ao array de pastas
-                        $subpasta = $diretorio . "/" . $item.'_pasta@';
+                        $subpasta = $diretorio . "/" . $item . '_pasta@';
                         $pastas[] = $caminhoBase . $subpasta; // Inclui o caminho base da pasta
                         // Chama a função recursivamente para listar os arquivos da subpasta
                         $subArquivos = listarArquivos($subpasta, $caminhoBase);
@@ -142,5 +145,3 @@ function listarArquivos($diretorio, $caminhoBase = '') {
 
     return $resultado;
 }
-
-

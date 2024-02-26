@@ -113,6 +113,7 @@
              $setting->days_charge       = $dados->days_charge;
              $setting->hours_charge      = $dados->hours_charge;
              $setting->days_antes_charge = $dados->days_antes_charge;
+             $setting->expire_date_days  = $dados->expire_date_days;
              $setting->wpp_charge        = $dados->wpp_charge;
              
              if($dados->days_charge != "false"){

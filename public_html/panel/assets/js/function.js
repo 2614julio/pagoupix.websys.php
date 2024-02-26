@@ -278,7 +278,7 @@ $(function() {
                 { "data": "opc" }
         ];
         
-        if (idclient === 0) {
+        if (parseInt(idclient) === 0) {
              columns = [
                 { "data": "id" },
                 { "data": "cliente" },
@@ -305,7 +305,8 @@ $(function() {
             "columns": columns
         });
 
-        if (idclient !== 0) {
+        if (parseInt(idclient) !== 0) {
+
             $.post(urlsite + "/panel/model/controller/signatures/getclient.php",{idclient}, function(data) {
                 try {
                     let obj = JSON.parse(data);
@@ -317,8 +318,8 @@ $(function() {
                         $("#client_name").html(obj.data.nome);
                     }
                 } catch (e) {
-                     history.go(-1);
-                     return false;
+                    history.go(-1);
+                    return false;
                 }
             });
         }
@@ -599,6 +600,62 @@ function addLink(){
       });
 
 }
+
+  $("#recoverPassMail").on('click', function(){
+        
+      $("#recoverPassMail").prop('disabled', true);
+      
+      let email = $("#email").val();
+      
+         $.post(urlsite + '/panel/model/process.getaccountMail.php', {email}, function(data){
+             
+            $("#recoverPassMail").prop('disabled', false);
+    
+            try {
+              const obj = JSON.parse(data);
+              if(obj.erro){
+                  
+                    $.notify({
+                          icon: 'fa fa-times',
+                          message: obj.message,
+                          title: 'E-mail não localizado',
+                          url: "#",
+                          target: "_self"
+                     },{
+                          type: 'danger',
+                          timer: 5,
+                          allow_dismiss: true,
+                          newest_on_top: true,
+                          placement: {
+                            from: 'top',
+                            align: 'center'
+                          }
+                    });
+                        
+              }else{
+                    $.notify({
+                          icon: 'fa fa-check',
+                          message: obj.message,
+                          title: 'E-mail enviado',
+                          url: "#",
+                          target: "_self"
+                     },{
+                          type: 'success',
+                          timer: 5,
+                          allow_dismiss: true,
+                          newest_on_top: true,
+                          placement: {
+                            from: 'top',
+                            align: 'center'
+                          }
+                    });
+              }
+            } catch (e) {
+              console.log(e);
+            }
+          });
+        
+    });
 
 function copyLinkCad(ref) {
 
@@ -915,6 +972,7 @@ $("#saveCharge").on('click', function(){
     dadosJson.hours_charge      = $("#hours_charge").val();
     dadosJson.days_antes_charge = $("#days_antes_charge").val();
     dadosJson.wpp_charge        = $("#wpp_charge").val();
+    dadosJson.expire_date_days  = $("#expire_date_days").val();
 
     var dados = JSON.stringify(dadosJson);
 

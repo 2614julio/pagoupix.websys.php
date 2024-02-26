@@ -37,7 +37,7 @@
 
   }else{
 
-    header('Location: https://pagoupix.com.br/panel/');
+    header('Location: '.SITE_URL.'/panel/');
 
   }
 

@@ -412,16 +412,27 @@ class Client extends Conn{
       }
     }
     
-     public function getClientByid($id){
-      $query_consult = $this->pdo->query("SELECT * FROM `client` WHERE id='{$id}'");
-      $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
+    public function getClientByid($id){
+     $query_consult = $this->pdo->query("SELECT * FROM `client` WHERE id='{$id}'");
+     $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
 
-      if(count($fetch_consult)>0){
-        return $fetch_consult[0];
-      }else{
-        return false;
-      }
+     if(count($fetch_consult)>0){
+       return $fetch_consult[0];
+     }else{
+       return false;
+     }
+   }
+    
+   public function getClientByDocument($document){
+    $query_consult = $this->pdo->query("SELECT * FROM `client` WHERE document='".preg_match('/^[0-9]+$/', $document)."'");
+    $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
+
+    if(count($fetch_consult)>0){
+      return $fetch_consult[0];
+    }else{
+      return false;
     }
+  }
     
    public function getClientAppToken($token){
       $query_consult = $this->pdo->query("SELECT * FROM `client` WHERE token='{$token}'");

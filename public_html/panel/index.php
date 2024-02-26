@@ -57,6 +57,8 @@
 
       if($page == "create"){
         require_once 'create.php';
+      }else if($page == "recover_password"){
+        include_once 'recover_password.php';
       }else if($page == "authGoogle"){
         require_once 'authGoogle.php';
       }else if($page == "loadApp"){

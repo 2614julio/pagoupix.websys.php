@@ -2,7 +2,6 @@
 <?php include_once 'inc/head.php'; ?>
 <body class="">
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
       <div class="container">
 
         <div style="margin-top:100px;" class="row">
@@ -19,6 +18,9 @@
                     </div>
                     <div class="form-group">
                       <input autocomplete="off" type="text" placeholder="Repita seu Email" id="email_repite" class="form-control" name="" value="">
+                    </div>
+                    <div class="form-group">
+                      <input autocomplete="off" type="text" placeholder="CPF/CNPJ" id="document" class="form-control" name="" value="">
                     </div>
                     <div class="form-group">
                       <input autocomplete="off" type="password" placeholder="Senha" id="senha" class="form-control" name="" value="">

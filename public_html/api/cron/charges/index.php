@@ -70,23 +70,25 @@
             
             $date_now  = date('Y-m-d');
             if($setting_charge->days_antes_charge != '0'){
-                $next_data = date('Y-m-d', strtotime('+'.$setting_charge->days_antes_charge.' days', strtotime(date('Y-m-d'))));
+                
+                $totime    = strtotime('+'.$setting_charge->days_antes_charge.' days', strtotime(date('Y-m-d')));
+                $next_data = date('Y-m-d', $totime);
+                
             }else{
-                $next_data = date('Y-m-d');
+                $totime    = strtotime('now');
+                $next_data = date('Y-m-d', $totime);
             }
+            
             
             // get signatures
             $signatures = $charges->getSignaturesExpire($date_now, $next_data, $uniq, $last_charge, $dates_lasted);
             
-        
             if($signatures){
-                
                 
                 if($setting_charge->days_charge != "false"){
                     
                     // verifica whatsapp
                     $instance = $charges->getInstanceByClient();
-                    
                     
                     if($instance){
                         
@@ -102,7 +104,10 @@
                                 
                                 $invoiceLasted = $invoice->getInvoiceOpen($signature->id);
                                 
-                              
+                                // expirate invoice
+                                $expirate_days_invocie = !isset($setting_charge->expire_date_days) ? 7 : (int)$setting_charge->expire_date_days;
+                                $expirate_invoice = strtotime('+'.$expirate_days_invocie.' days', strtotime('now'));
+                                
                                 // criar fatura
                                 $dadosInvoice               = new stdClass();
                                 $dadosInvoice->id_assinante = $signature->id;
@@ -110,11 +115,12 @@
                                 $dadosInvoice->status       = 'pending';
                                 $dadosInvoice->value        = $plan->valor;
                                 $dadosInvoice->plan_id      = $plan->id;
+                                $dadosInvoice->expire_date  = date('Y-m-d H:i:s', $expirate_invoice);
                                 $dadosInvoice->client_id    = $client->id;
                                 if($invoiceLasted == false){
-                                    $invoiceAdd                 = $invoice->addInvoice($dadosInvoice,true);
+                                    $invoiceAdd             = $invoice->addInvoice($dadosInvoice,true);
                                 }else{
-                                    $invoiceAdd                 = $invoiceLasted->id;
+                                    $invoiceAdd             = $invoiceLasted->id;
                                 }
                                 
                                 $invoiceData                = $invoice->getInvoiceByid($invoiceAdd);

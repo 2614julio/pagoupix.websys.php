@@ -12,8 +12,7 @@
         $clientid = trim(explode('/',$_GET['url'])[1]);
     }
   }
-  
-  
+
 ?>
 <body class="">
 
@@ -159,6 +158,5 @@
           </div>
         </div>
       </div>
-
 
       <?php include_once 'inc/footer.php'; ?>

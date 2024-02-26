@@ -96,8 +96,6 @@
    public $seller;
 
 
-
-
    public function __construct($dados_api){
        
        $this->conn      = new Conn;

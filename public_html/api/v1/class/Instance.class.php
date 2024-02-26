@@ -267,6 +267,7 @@ class Instance extends Conn{
   }
 
   public function start($headers,$params){
+      
 
       if( !$this->auth ){
             return json_encode(array('status' => 'erro', 'message' => 'Access Token invalid'));
@@ -299,9 +300,10 @@ class Instance extends Conn{
                     'Content-Type: application/json'
                   ),
                 ));
-
+                
                 $response = curl_exec($curl);
                 $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                
                 curl_close($curl);
 
 

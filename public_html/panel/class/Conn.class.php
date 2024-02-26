@@ -1,10 +1,17 @@
 <?php
-
+if ($_SERVER['SERVER_NAME'] != 'pagou.pix') {
  define('HOSTNAME', 'localhost');
  define('USERNAME', 'pagoupix_sistema');
  define('PASSWORD', 'AgVYfg3kBF6G');
  define('DATABASE', 'pagoupix_sistema');
  define('DOMAIN', 'pagoupix.com.br');
+} else {
+  define('HOSTNAME', 'localhost');
+  define('USERNAME', 'root');
+  define('PASSWORD', '');
+  define('DATABASE', 'pagoupix');
+  define('DOMAIN', 'pagou.pix');
+}
 
  class Conn{
 
