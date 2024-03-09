@@ -1,7 +1,7 @@
 <?php
 
   /*cobrei.vc*/
-  // @AUTHOR: AbinaSilva
+  // @AUTHOR: Luan Alves
   // @DATE: 16/05/2023
   // api-whats.com
 
