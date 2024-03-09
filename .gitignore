@@ -8,5 +8,4 @@
 /.well-known
 /*.json
 /cadastro/.well-known
-/panel/config.php
-/panel/class/Conn.class.php
+panel/class/Conn.class.php
