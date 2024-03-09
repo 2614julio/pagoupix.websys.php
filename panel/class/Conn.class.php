@@ -9,7 +9,7 @@ if ($_SERVER['SERVER_NAME'] != 'pagou.pix') {
   define('HOSTNAME', 'localhost');
   define('USERNAME', 'root');
   define('PASSWORD', '');
-  define('DATABASE', 'jobs_pagoupix');
+  define('DATABASE', 'pagoupix');
   define('DOMAIN', 'pagou.pix');
 }
 
