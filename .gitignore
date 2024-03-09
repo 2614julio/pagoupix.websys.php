@@ -5,6 +5,8 @@
 /TODO.txt
 /vendor
 /public_html.zip
-/public_html/.well-known
-/public_html/*.json
-/public_html/cadastro/.well-known
+/.well-known
+/*.json
+/cadastro/.well-known
+/panel/config.php
+/panel/class/Conn.class.php

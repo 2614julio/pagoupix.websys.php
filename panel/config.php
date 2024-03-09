@@ -19,7 +19,7 @@ define('PIN_COMP', 1111);
 
 // Dias faltando para mostrar aviso de vencimento
 define('DAYS_DUE', 7);
-
+ 
 // define o valor da assinatura
 define('VALOR_ASSINATURA', '49,90');
 
