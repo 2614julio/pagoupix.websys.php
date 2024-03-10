@@ -41,7 +41,9 @@ $columns = array(
          $type_template = "<span class='badge badge-success' >Venda</span>";
        }else if($row['tipo'] == "cart"){
          $type_template = "<span class='badge badge-info' >Carrinho</span>";
-       }
+       }else if($row['tipo'] == "atraso"){
+        $type_template = "<span class='badge badge-danger' >Atraso</span>";
+      }
 
       return $type_template;
     }),

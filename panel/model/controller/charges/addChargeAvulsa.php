@@ -41,6 +41,7 @@
               $dados->valor == "" || 
               $dados->temC == "" || 
               $dados->temV == "" || 
+              $dados->temL == "" ||
               $dados->idC == ""){
               
               echo json_encode(['erro' => true, 'message' => 'Preencha todos os campos']);
@@ -68,10 +69,11 @@
           
           $validTemplate = false;
           
-          if($messages->getTemplate($dados->temC) && $messages->getTemplate($dados->temV)){
+          if($messages->getTemplate($dados->temC) && $messages->getTemplate($dados->temV) && $messages->getTemplate($dados->temL)){
              $templates = new stdClass();
              $templates->cobranca = $dados->temC;
              $templates->venda    = $dados->temV;
+             $templates->atraso   = $dados->temL;
              $templates           = json_encode($templates);
              $validTemplate       = true;
           }else{
@@ -86,6 +88,7 @@
                     'nome'  => 'Cobrança para '.$dados->nome,
                     'template_charge' => $dados->temC,
                     'template_sale' => $dados->temV,
+                    'template_late' => $dados->temL,
                     'ciclo' => 'mes'
                   ], true, 1);
               

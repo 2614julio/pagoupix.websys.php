@@ -5,52 +5,51 @@
   
   require_once 'class/Options.class.php';
   require_once 'class/Wpp.class.php';
-  
-  $options = new Options($_SESSION['CLIENT']['id']);
-  $wpp     = new Wpp($_SESSION['CLIENT']['id']);
-  
-  $options_charge      = $options->getOption('setting_charge',true);
-  $options_charge_last = $options->getOption('setting_charge_last',true);
-  $options_juros_multa = $options->getOption('setting_juros_multa',true);
-  
+  require_once 'class/Messages.class.php';
+
+  $options  = new Options($_SESSION['CLIENT']['id']);
+  $wpp      = new Wpp($_SESSION['CLIENT']['id']);
+  $messages = new Messages($_SESSION['CLIENT']['id']);
+
+  $options_charge          = $options->getOption('setting_charge',true);
+  $options_charge_last     = $options->getOption('setting_charge_last',true);
+  $options_juros_multa     = $options->getOption('setting_juros_multa',true);
+  $setting_charge_interval = $options->getOption('setting_charge_interval',true);
+
+  $templates = $messages->getTemplates('atraso');
+
   if(!$options_charge){
-     $options_charge                    = new stdClass();
-     $options_charge->days_charge       = 'false';
-     $options_charge->hours_charge      = '12-16';
-     $options_charge->days_antes_charge = '0';
-     $options_charge->wpp_charge        = '0';
-     $options_charge->expire_date_days  = '7';
+     $options_charge = (object) array('days_charge' => 'false', 'hours_charge' => '12-16', 'days_antes_charge' => '0', 'wpp_charge' => '0', 'expire_date_days' => '7');
   }else{
-      
      $options_charge = json_decode($options_charge);
-      
      if(!isset($options_charge->expire_date_days)){
          $options_charge->expire_date_days = '7';
      }
-
   }
   
   if(!$options_charge_last){
-     $options_charge_last                 = new stdClass();
-     $options_charge_last->charge_last_1  = 1;
-     $options_charge_last->charge_last_2  = 5;
-     $options_charge_last->charge_last_3  = 9;
-     $options_charge_last->charge_last_4  = 13;
+      $options_charge_last  = (object) array('active' => 0, 'charge_last_1' => 1, 'charge_last_2' => 5, 'charge_last_3' => 9, 'charge_last_4' => 13);
   }else{
       $options_charge_last = json_decode($options_charge_last);
   }
   
   if(!$options_juros_multa){
-     $options_juros_multa                  = new stdClass();
-     $options_juros_multa->frequency_juros = 'diario';
-     $options_juros_multa->juros_n         = '';
-     $options_juros_multa->cobrar_multa    = 'sim';
-     $options_juros_multa->valor_multa     = '';
-     $options_juros_multa->active          = 0;
+     $options_juros_multa = (object) array('frequency_juros' => 'diario', 'juros_n' => '', 'cobrar_multa' => 'sim', 'valor_multa' => '', 'active' => 0);
   }else{
       $options_juros_multa = json_decode($options_juros_multa);
   }
   
+
+  if(!$setting_charge_interval){
+        $setting_charge_interval = (object) array('active' => 0, 'max_send' => 3, 'interval_days' => 2, 'next_date' => date("d-m-Y", strtotime("+2 days")));
+  }else{
+        $setting_charge_interval = json_decode($setting_charge_interval);
+  }
+
+  if($setting_charge_interval->active > 0){
+        $options_charge_last->active = 0;
+  }
+    
   $instance_whats = $wpp->getInstanceClient();
 
 ?>
@@ -206,69 +205,134 @@
                 </div>
             </div>
             
+            
             <div class="col-lg-12 col-md-12" >
                 <div class="card">
                     <div class="card-body">
                         
-                        <div class="row" >
-                            
-                            <div class="pl-3 col-md-12" >
-                                 <h3 class="pb-0 mb-2 "  > <input <?php if(isset($options_charge_last->active)){ if($options_charge_last->active == 1){ echo 'checked';} } ?> type="checkbox" id="charge_last" class="flipswitch" /> Cobranças após o vencimento <i class="fa fa-clock" ></i> </h3>
-                                 <p>Monte sua régua de cobranças</p>
+                        <div class="row justify-content-center" >
+
+                            <div class="col-md-12 mb-3">
+                                  <div class="row">
+                                        <div class="pl-3 col-md-12 mb-3" >
+                                        <h3 class="mb-0" >Cobranças após o vencimento <i class="fa fa-clock" ></i> </h3>
+                                        <p>Escolha o modelo de cobranças após o vencimento. (A verificação de cobranças deve estar em "Todos os dias")</p>
+                                    </div>
+                                    
+
+                                    <div class="pl-3 col-md-6" id="check_options_charge_last mb-3" >
+                                        <label style="color:#2c2c2c;font-size: 18px;cursor: pointer;" for="charge_last" class="pb-0 mb-2 "  > <input <?php if(isset($options_charge_last->active)){ if($options_charge_last->active > 0){ echo 'checked';} } ?> type="checkbox" id="charge_last" class="flipswitch active_charges_lasted" /> Cobranças moderadas <i class="fa-solid fa-leaf"></i> </label>
+                                        <p>Regua de cobrança específica. ( 4 cobranças no máximo ) </p>
+                                    </div>
+
+                                    <div class="pl-3 col-md-6" id="check_options_charge_interval mb-3" >
+                                        <label style="color:#2c2c2c;font-size: 18px;cursor: pointer;" for="charge_interval" class="pb-0 mb-2 "  > <input <?php if(isset($setting_charge_interval->active)){ if($setting_charge_interval->active > 0){ echo 'checked';} } ?> type="checkbox" id="charge_interval" class="flipswitch active_charges_lasted" /> Cobranças agrecivas <i class="fa-solid fa-bolt"></i> </label>
+                                        <p>Cobrança será enviada sempre em um intervalo especifico de dias. (Inúmeras cobranças)</p>
+                                    </div>
+                                 </div>
                             </div>
                             
-                            
-                             <div class="col-md-3" >
-                                <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
-                                <div class="form-group" >
-                                    <label>Enviar cobrança após:</label>
-                                    <select id="charge_last_1" class="form-control" >
-                                        <option <?php if($options_charge_last->charge_last_1 == 1  ){ echo 'selected'; } ?> value="1" >1 dia de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_1 == 2  ){ echo 'selected'; } ?> value="2" >2 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_1 == 3  ){ echo 'selected'; } ?> value="3" >3 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_1 == 4  ){ echo 'selected'; } ?> value="4" >4 dias de vencimento</option>
-                                    </select>
+
+                            <div class="col-md-11 col-11 mb-4">
+                                <div class="row" style="padding: 10px;border:4px dotted #d7d7d7;">
+                                                
+                                        <!-- Charge last -->
+                                        <div class="col-md-3 opt_charge_last" style="<?php if($options_charge_last->active < 1){ echo 'display:none;';} ?>" >
+                                            <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                            <div class="form-group" >
+                                                <label>Enviar cobrança após:</label>
+                                                <select id="charge_last_1" class="form-control" >
+                                                    <option <?php if($options_charge_last->charge_last_1 == 1  ){ echo 'selected'; } ?> value="1" >1 dia de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_1 == 2  ){ echo 'selected'; } ?> value="2" >2 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_1 == 3  ){ echo 'selected'; } ?> value="3" >3 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_1 == 4  ){ echo 'selected'; } ?> value="4" >4 dias de vencimento</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3 opt_charge_last" style="<?php if($options_charge_last->active < 1){ echo 'display:none;';} ?>" >
+                                            <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                            <div class="form-group" >
+                                                <label>Enviar cobrança após:</label>
+                                                <select id="charge_last_2" class="form-control" >
+                                                    <option <?php if($options_charge_last->charge_last_2 == 5  ){ echo 'selected'; } ?> value="5" >5 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_2 == 6  ){ echo 'selected'; } ?> value="6" >6 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_2 == 7  ){ echo 'selected'; } ?> value="7" >7 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_2 == 8  ){ echo 'selected'; } ?> value="8" >8 dias de vencimento</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3 opt_charge_last" style="<?php if($options_charge_last->active < 1){ echo 'display:none;';} ?>" >
+                                            <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                            <div class="form-group" >
+                                                <label>Enviar cobrança após:</label>
+                                                <select id="charge_last_3" class="form-control" >
+                                                    <option <?php if($options_charge_last->charge_last_3 == 9  ){ echo 'selected'; } ?> value="9" >9 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_3 == 10  ){ echo 'selected'; } ?> value="10" >10 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_3 == 11  ){ echo 'selected'; } ?> value="11" >11 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_3 == 12  ){ echo 'selected'; } ?> value="12" >12 dias de vencimento</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3 opt_charge_last" style="<?php if($options_charge_last->active < 1){ echo 'display:none;';} ?>" >
+                                            <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                            <div class="form-group" >
+                                                <label>Enviar cobrança após:</label>
+                                                <select id="charge_last_4" class="form-control" >
+                                                    <option <?php if($options_charge_last->charge_last_4 == 13  ){ echo 'selected'; } ?> value="13" >13 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_4 == 14  ){ echo 'selected'; } ?> value="14" >14 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_4 == 15  ){ echo 'selected'; } ?> value="15" >15 dias de vencimento</option>
+                                                    <option <?php if($options_charge_last->charge_last_4 == 16  ){ echo 'selected'; } ?> value="16" >16 dias de vencimento</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- end charges last -->
+
+
+
+                                        <!-- charge interval -->
+
+                                          <input type="hidden" value="<?= $setting_charge_interval->next_date; ?>" id="chargeInterval_next_date">
+ 
+                                            <div class="col-md-4 opt_charge_interval" style="<?php if($setting_charge_interval->active < 1){ echo 'display:none;';} ?>" >
+                                                <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                                <div class="form-group" >
+                                                    <label>Intervalo de cobranças</label>
+                                                    <select id="chargeInterval_interval_days" class="form-control" >
+
+                                                        <option <?php if($setting_charge_interval->interval_days == 1 ){ echo 'selected'; } ?> value="1" >Todo dia</option>
+
+                                                        <?php for ($i=2; $i < 29; $i++) { ?>
+                                                            <option <?php if($setting_charge_interval->interval_days == $i ){ echo 'selected'; } ?> value="<?= $i; ?>" >A cada <?= $i; ?> dias </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <small id="label_next_date" >Próxima cobrança: <?= date('d/m/Y', strtotime($setting_charge_interval->next_date)); ?> </small>
+                                            </div>
+
+                                            <div class="col-md-4 opt_charge_interval" style="<?php if($setting_charge_interval->active < 1){ echo 'display:none;';} ?>" >
+                                                <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
+                                                <div class="form-group" >
+                                                    <label>Número máximo de cobranças</label>
+                                                    <select id="chargeInterval_max_send" class="form-control" >
+                                                        <option <?php if($setting_charge_interval->max_send == 0 ){ echo 'selected'; } ?> value="0" > Sem limite </option>
+                                                        <?php for ($i=2; $i < 101; $i++) { ?>
+                                                            <option <?php if($setting_charge_interval->max_send == $i ){ echo 'selected'; } ?> value="<?= $i; ?>" ><?= $i; ?> cobranças </option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        <!-- end charges last -->
+
                                 </div>
                             </div>
-                            
-                             <div class="col-md-3" >
-                                <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
-                                <div class="form-group" >
-                                    <label>Enviar cobrança após:</label>
-                                    <select id="charge_last_2" class="form-control" >
-                                        <option <?php if($options_charge_last->charge_last_2 == 5  ){ echo 'selected'; } ?> value="5" >5 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_2 == 6  ){ echo 'selected'; } ?> value="6" >6 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_2 == 7  ){ echo 'selected'; } ?> value="7" >7 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_2 == 8  ){ echo 'selected'; } ?> value="8" >8 dias de vencimento</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                             <div class="col-md-3" >
-                                <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
-                                <div class="form-group" >
-                                    <label>Enviar cobrança após:</label>
-                                    <select id="charge_last_3" class="form-control" >
-                                        <option <?php if($options_charge_last->charge_last_3 == 9  ){ echo 'selected'; } ?> value="9" >9 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_3 == 10  ){ echo 'selected'; } ?> value="10" >10 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_3 == 11  ){ echo 'selected'; } ?> value="11" >11 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_3 == 12  ){ echo 'selected'; } ?> value="12" >12 dias de vencimento</option>
-                                    </select>
-                                </div>
-                             </div>
-                             
-                              <div class="col-md-3" >
-                                 <?php if(!$instance_whats){ ?><p class="blut_setting"></p><?php } ?>
-                                 <div class="form-group" >
-                                    <label>Enviar cobrança após:</label>
-                                    <select id="charge_last_4" class="form-control" >
-                                        <option <?php if($options_charge_last->charge_last_4 == 13  ){ echo 'selected'; } ?> value="13" >13 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_4 == 14  ){ echo 'selected'; } ?> value="14" >14 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_4 == 15  ){ echo 'selected'; } ?> value="15" >15 dias de vencimento</option>
-                                        <option <?php if($options_charge_last->charge_last_4 == 16  ){ echo 'selected'; } ?> value="16" >16 dias de vencimento</option>
-                                    </select>
-                                </div>
-                             </div>
+
+
+
                             
                             <?php if($instance_whats){ ?>
                                 <div class="col-md-12">
@@ -344,6 +408,7 @@
                 </div>
             </div>
             
+            <?php if($options_charge_last->active > 0){ ?>
              <div class="col-md-12">
                 <div class="card" >
                   <div class="card-body">
@@ -421,7 +486,8 @@
                   </div>
                 </div>
             </div>
-            
+            <?php } ?>
+
         </div>
       </div>
 

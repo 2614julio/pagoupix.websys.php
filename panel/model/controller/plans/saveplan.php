@@ -32,6 +32,10 @@
                 $dados->template_sale = $dados->template_sale;
             }
 
+            if($dados->template_late == "" || $dados->template_late == '0'){
+                $dados->template_late = $dados->template_late;
+            }
+
             if($dados->custo == ""){
               $dados->custo = "0,00";
             }else{

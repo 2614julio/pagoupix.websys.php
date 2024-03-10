@@ -20,7 +20,6 @@ class Cron extends Conn{
     $this->apikey    = "xXl8mrXnCv0yfJ5hYosQOOm06bLD39+VdFtIYHhaOBI=";
   }
 
-
  public function removeCron($cronjobid){
      
      $curl = curl_init();

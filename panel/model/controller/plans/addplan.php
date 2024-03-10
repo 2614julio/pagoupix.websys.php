@@ -42,6 +42,15 @@
             $dados->template_sale = "0";
         }
 
+        if(isset($dados->template_late)){
+            if($dados->template_late == "" || $dados->template_late == '0'){
+                $dados->template_late = $dados->template_late;
+            }
+        }else{
+            $dados->template_late = "0";
+        }
+
+        
         $addPlan = $plans->addPlan($dados,true);
 
         if($addPlan){

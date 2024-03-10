@@ -21,12 +21,13 @@
     require_once "../../../panel/class/Charges.class.php";
     require_once "../../../panel/class/Options.class.php";
     require_once "../../../panel/class/Invoice.class.php";
-    
+    require_once "../../../panel/class/Cron.class.php";
 
     $charges = new Charges($client_id);
     $options = new Options($client_id);
     $invoice = new Invoice($client_id);
-    
+    $cron    = new Invoice($client_id);
+
     // get client 
     $client = $charges->getClient();
     
@@ -38,51 +39,58 @@
             exit;
         }
         
-        
         // verifica setting charge
         $setting_charge = $options->getOption('setting_charge', true);
-        
         
         if($setting_charge){
             
             $setting_charge = json_decode($setting_charge);
             
-            
             // verificar se existe cobrancas apos o vencimento
             $setting_charge_last = json_decode($options->getOption('setting_charge_last', true));
+            $setting_charge_interval = json_decode($options->getOption('setting_charge_interval', true));
             
             $last_charge  = false;
+            $interval_charge = false;
             $dates_lasted = array();
+
+
+            if(isset($setting_charge_last->active)){
+               if($setting_charge_last->active == 1){
+                $dates_lasted[1] = $setting_charge_last->charge_last_1;
+                $dates_lasted[2] = $setting_charge_last->charge_last_2;
+                $dates_lasted[3] = $setting_charge_last->charge_last_3;
+                $dates_lasted[4] = $setting_charge_last->charge_last_4;
+                $last_charge = true;
+               }
+            }
             
-            if($setting_charge_last){
-                
-                if($setting_charge_last->active == 1){
-                    
-                    $dates_lasted[1] = $setting_charge_last->charge_last_1;
-                    $dates_lasted[2] = $setting_charge_last->charge_last_2;
-                    $dates_lasted[3] = $setting_charge_last->charge_last_3;
-                    $dates_lasted[4] = $setting_charge_last->charge_last_4;
-                    
-                    $last_charge = true;
-                    
+            if(isset($setting_charge_interval->active)){
+                if($setting_charge_interval->active == 1){
+                    $last_charge = false;
+                    $interval_charge = true;
                 }
             }
             
             $date_now  = date('Y-m-d');
             if($setting_charge->days_antes_charge != '0'){
-                
                 $totime    = strtotime('+'.$setting_charge->days_antes_charge.' days', strtotime(date('Y-m-d')));
                 $next_data = date('Y-m-d', $totime);
-                
             }else{
                 $totime    = strtotime('now');
                 $next_data = date('Y-m-d', $totime);
             }
-            
-            
+
+            if($interval_charge){
+                if($setting_charge_interval->next_date == date('d-m-Y')){
+                    file_get_contents( SITE_URL . '/api/cron/charges/interval/'.$client_id);
+                    echo 'teste';
+                }
+            }
+
             // get signatures
             $signatures = $charges->getSignaturesExpire($date_now, $next_data, $uniq, $last_charge, $dates_lasted);
-            
+
             if($signatures){
                 
                 if($setting_charge->days_charge != "false"){
@@ -91,7 +99,7 @@
                     $instance = $charges->getInstanceByClient();
                     
                     if($instance){
-                        
+
                         foreach($signatures as $key => $signature){
                             
                             if($plan_id){
@@ -124,11 +132,16 @@
                                 }
                                 
                                 $invoiceData                = $invoice->getInvoiceByid($invoiceAdd);
-                                
+                                $dadosInvoice->invoice_id   = $invoiceData->id;
 
-                                $template_message = $charges->getTemplateById($plan->template_charge);
-    
-                                
+                                if($signature->expired > 0){
+                                    $template_message = $charges->getTemplateById($plan->template_charge);
+                                }else{
+                                    $template_message = $charges->getTemplateById($plan->template_late);
+                                    $template_message = $template_message ? $template_message : $charges->getTemplateById($plan->template_charge);
+                                }
+
+                                                  
                                 if($template_message){
                                     
                                      $dados_template = json_decode($template_message->texto);
@@ -176,19 +189,14 @@
                                     $response = curl_exec($curl);
                                     curl_close($curl);
 
-                                      
-                                     
-                                      $charges->insertFila($dados);
-                                      $charges->insertCharge($dadosInvoice);
+                                    $charges->insertFila($dados);
+                                    $charges->insertCharge($dadosInvoice);
                                         
                                 }
                                 
-                                
-
                             }
                             
                         }
-                         
                         
                     }
                     

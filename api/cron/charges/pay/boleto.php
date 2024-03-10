@@ -3,7 +3,7 @@
     $curl = curl_init();
     
     curl_setopt_array($curl, array(
-      CURLOPT_URL => 'https://cobrei.vc/checkout/backend/api.php',
+      CURLOPT_URL => 'https://'.parse_url(SITE_URL, PHP_URL_HOST).'/checkout/backend/api.php',
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => '',
       CURLOPT_MAXREDIRS => 10,
@@ -17,7 +17,7 @@
     }',
       CURLOPT_HTTPHEADER => array(
         'Content-Type: application/json',
-        'Authorization: Bearer 832YBVE78204POXSV23-34987OPEVX83920-X$SD09878X-22WS-23894765XCZXWQ435HTER564',
+        'Authorization: Bearer '. KEY_CHECKOUT,
         'Cookie: Cookie_2=value; PHPSESSID=4b6332ebd1614656f869baba3c3c56e9'
       ),
     ));

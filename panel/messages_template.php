@@ -85,7 +85,7 @@
 
                 <div class="col-md-6" >
                     <div data-type-template="cobranca" class="selected_type_tempalte_click card">
-                        <div class="card-body text-center">
+                        <div class="card-body text-center pt-0">
                             <span class="selected_type_template" > <i class="fa fa-circle fa-regular" ></i> </span>
                             <h4> <i class="fa-solid fa-file-invoice-dollar"></i> Cobrança</h4>
                         </div>
@@ -94,9 +94,18 @@
                 
                  <div class="col-md-6" >
                     <div data-type-template="venda" class="selected_type_tempalte_click card">
-                        <div class="card-body text-center">
+                        <div class="card-body text-center pt-0">
                             <span class="selected_type_template" > <i class="fa fa-circle fa-regular" ></i> </span>
                             <h4> <i class="fa-solid fa-bag-shopping"></i> Venda</h4>
+                        </div>
+                    </div>
+                 </div>
+
+                 <div class="col-md-6" >
+                    <div data-type-template="atraso" class="selected_type_tempalte_click card">
+                        <div class="card-body text-center pt-0">
+                            <span class="selected_type_template" > <i class="fa fa-circle fa-regular" ></i> </span>
+                            <h4> <i class="fa-solid fa-calendar-xmark"></i> Atraso</h4>
                         </div>
                     </div>
                  </div>

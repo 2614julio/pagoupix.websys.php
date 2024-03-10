@@ -4,8 +4,8 @@
    require_once 'class/Messages.class.php';
     
     
-   $tempaltes     = new Messages($_SESSION['CLIENT']['id']);
-   $get_templates = $tempaltes->getTemplates();
+   $templates     = new Messages($_SESSION['CLIENT']['id']);
+   $get_templates = $templates->getTemplates();
 
    $wpp            = new Wpp($_SESSION['CLIENT']['id']);
    $instance_whats = $wpp->getInstanceClient();
@@ -109,7 +109,7 @@
                     <div class="table-responsive">
                       <table style="width: 100%!important;" id="table_linkscads" class="table">
                         <thead class="text-success">
-                          <th>Pacote</th>
+                          <th>Plano</th>
                           <th>Referência</th>
                           <th>Página Direcionada</th>
                           <th>Opções</th>
@@ -222,7 +222,7 @@
                     <div class="row">
                         
                         
-                        <div class="col-md-6" >
+                        <div class="col-md-12" >
                             <div class="form-group">
                              	<select class="form-control" id="template_charge_cob" name="">
                                   <option value="0" >Selecione o template de cobrança</option>
@@ -233,11 +233,22 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-6" >
+                        <div class="col-md-12" >
                             <div class="form-group">
                              	<select class="form-control" id="template_charge_ven" name="">
                                   <option value="0" >Selecione o template de venda</option>
                                   <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "venda"){ ?>
+                                   <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
+                                  <?php } } } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12" >
+                            <div class="form-group">
+                             	<select class="form-control" id="template_late" name="">
+                                  <option value="0" >Selecione o template de atraso</option>
+                                  <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "atraso"){ ?>
                                    <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
                                   <?php } } } ?>
                                 </select>
@@ -351,9 +362,9 @@
                 <div class="col-md-12" >
                     <div class="form-group">
                       <select class="form-control" id="client_plan" name="client_plan">
-                        <option value="">Selecionar Pacote</option>
+                        <option value="">Selecionar plano</option>
                       </select>
-                      <small onclick="add_new_plan_now();" style="cursor:pointer;margin-left:10px;color: #18ce0f;" > <i class="seta_add_plan fa fa-arrow-right" ></i> Criar novo pacote agora</small>
+                      <small onclick="add_new_plan_now();" style="cursor:pointer;margin-left:10px;color: #18ce0f;" > <i class="seta_add_plan fa fa-arrow-right" ></i> Criar novo plano agora</small>
                     </div>
                 </div>
 
@@ -455,7 +466,7 @@
                 <div class="col-md-12" >
                     <div class="form-group">
                       <select class="form-control" id="link_plan" name="link_plan">
-                        <option value="">Selecionar pacote</option>
+                        <option value="">Selecionar plano</option>
                       </select>
                     </div>
                 </div>
@@ -539,7 +550,7 @@
 
                  <div class="text-center col-md-12" style="margin-top:10px;">
                    <p style="font-size:12px;">
-                     O período de renovação será baseado no clico de pagamento do pacote que este usuário está cadastrado. 
+                     O período de renovação será baseado no clico de pagamento do plano que este usuário está cadastrado. 
                    </p>
                  </div>
                  

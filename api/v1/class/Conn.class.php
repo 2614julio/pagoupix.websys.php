@@ -10,9 +10,9 @@
   public function pdo(){
 
     $host   = "localhost";
-    $user   = "pagoupix_sistema";
-    $senha  = "AgVYfg3kBF6G";
-    $bd     = "pagoupix_sistema";
+    $user   = "root";
+    $senha  = "";
+    $bd     = "jobs_pagoupix";
     try{
       $pdo = new PDO("mysql:host=$host;dbname=$bd", $user, $senha, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES UTF8MB4"));
       return $pdo;

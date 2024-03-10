@@ -37,7 +37,22 @@ class Invoice extends Conn{
 
     }
     
-    
+    public function sumSends($invoice){
+       $this->pdo->query("UPDATE `invoices` SET count_send= count_send+1 WHERE id='{$invoice}';");
+    }
+
+    public function countSends($invoice){
+     
+      $query_consult = $this->pdo->query("SELECT * FROM `invoices` WHERE id='{$invoice}'");
+      $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
+
+      if(count($fetch_consult)>0){
+        return $fetch_consult[0]->count_send;
+      }else{
+        return false;
+      }
+    }
+
     public function convertMoney($type,$valor){
         if($type == 1){
           $a = str_replace(',','.',str_replace('.','',$valor));
@@ -186,15 +201,5 @@ class Invoice extends Conn{
 
     }
 
-    public function getPlansClient(){
-
-      $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
-      if(count($fetch_consult)>0){
-        return $fetch_consult;
-      }else{
-        return false;
-      }
-
-    }
 
 }

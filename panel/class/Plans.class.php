@@ -14,13 +14,14 @@ class Plans extends Conn{
 
     public function addPlan($dados,$lastid=false,$temporario=0){
 
-      $query = $this->pdo->prepare("INSERT INTO `plans` (valor,custo,nome,client_id,template_charge,template_sale,ciclo,temporario) VALUES (:valor, :custo, :nome, :client_id, :template_charge, :template_sale, :ciclo, :temporario) ");
+      $query = $this->pdo->prepare("INSERT INTO `plans` (valor,custo,nome,client_id,template_charge,template_sale,template_late,ciclo,temporario) VALUES (:valor, :custo, :nome, :client_id, :template_charge, :template_sale, :template_late, :ciclo, :temporario) ");
       $query->bindValue(':valor', $dados->valor);
       $query->bindValue(':custo', $dados->custo);
       $query->bindValue(':nome', $dados->nome);
       $query->bindValue(':client_id', $this->client_id);
       $query->bindValue(':template_charge', $dados->template_charge);
       $query->bindValue(':template_sale', $dados->template_sale);
+      $query->bindValue(':template_late', $dados->template_late);
       $query->bindValue(':ciclo', $dados->ciclo);
       $query->bindValue(':temporario', $temporario);
       
@@ -38,13 +39,14 @@ class Plans extends Conn{
     }
 
     function editPlan($dados){
-      $query = $this->pdo->prepare("UPDATE `plans` SET valor=:valor,custo=:custo,nome=:nome,template_charge=:template_charge,template_sale=:template_sale,ciclo=:ciclo WHERE id=:id AND client_id=:client_id");
+      $query = $this->pdo->prepare("UPDATE `plans` SET valor=:valor,custo=:custo,nome=:nome,template_charge=:template_charge,template_sale=:template_sale, template_late= :template_late, ciclo=:ciclo WHERE id=:id AND client_id=:client_id");
       $query->bindValue(':valor', $dados->valor);
       $query->bindValue(':custo', $dados->custo);
       $query->bindValue(':nome', $dados->nome);
       $query->bindValue(':ciclo', $dados->ciclo);
       $query->bindValue(':template_charge', $dados->template_charge);
       $query->bindValue(':template_sale', $dados->template_sale);
+      $query->bindValue(':template_late', $dados->template_late);
       $query->bindValue(':id', $dados->id);
       $query->bindValue(':client_id', $this->client_id);
 

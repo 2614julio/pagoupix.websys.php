@@ -12,7 +12,7 @@
 
       if($dados->nome != "" && $dados->tipo != ""){
 
-        if($dados->tipo != "cobranca" && $dados->tipo != "venda" && $dados->tipo != "cart"){
+        if($dados->tipo != "cobranca" && $dados->tipo != "venda" && $dados->tipo != "cart" && $dados->tipo != "atraso"){
           echo json_encode(['erro' => true, 'message' => 'Desculpe, tente novamente mais tarde.']);
           exit;
         }

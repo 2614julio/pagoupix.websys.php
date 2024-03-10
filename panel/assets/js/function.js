@@ -481,6 +481,7 @@ $(function() {
 
 });
 
+
 function b64DecodeUnicode(str) {
    return decodeURIComponent(atob(str).split('').map(function(c) {
        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
@@ -498,6 +499,28 @@ function checkboxvalueBolean(id) {
         return true;
     else return false;
 }
+
+
+$(".active_charges_lasted").on('change', function(e){
+
+    if($(this).is(':checked')){
+        if($(this).prop('id') === "charge_last"){
+            $("#charge_interval").prop( "checked", false);
+            $(".opt_charge_interval").hide();
+            $(".opt_charge_last").show();
+        }else if($(this).prop('id') === "charge_interval"){
+            $(".opt_charge_last").hide();
+            $(".opt_charge_interval").show();
+            $("#charge_last").prop( "checked", false);
+        }
+     }else{
+        $("#charge_interval").prop( "checked", false);
+        $("#charge_last").prop( "checked", false);
+        $(".opt_charge_interval").hide();
+        $(".opt_charge_last").hide();
+     }
+});
+
 
 function updateQuerystring(whatKey, newValue) {
         var exists = false;
@@ -788,6 +811,7 @@ function addChargeNow(){
     let valor   = $("#valor_charge").val();
     let temC    = $("#template_charge_cob").val();
     let temV    = $("#template_charge_ven").val();
+    let temL    = $("#template_late").val();
     let sendZap = checkboxvalue("#charge_send_wpp");
     let idC     = $("#signatura_id").val();
 
@@ -800,6 +824,7 @@ function addChargeNow(){
      dadosJson.valor   = valor;
      dadosJson.temC    = temC;
      dadosJson.temV    = temV;
+     dadosJson.temL    = temL;
      dadosJson.sendZap = sendZap;
      dadosJson.idC     = idC;
      dadosJson.plano   = 0;
@@ -926,23 +951,61 @@ $("#saveJuros").on('click', function(){
       });
 });
 
+
+$("#chargeInterval_interval_days").on("change", function(e){
+
+  let interval_days = parseInt($(this).val());
+
+  if(interval_days > 0){
+
+    let hoje = new Date();
+    hoje.setDate(hoje.getDate() + interval_days);
+    let dia = hoje.getDate();
+    let mes = hoje.getMonth() + 1;
+    let ano = hoje.getFullYear();
+    if (dia < 10) {
+        dia = '0' + dia;
+    }
+    if (mes < 10) {
+        mes = '0' + mes;
+    }
+   let dataFormatada = dia + '-' + mes + '-' + ano;
+   $("#chargeInterval_next_date").val(dataFormatada);
+   $("#label_next_date").html(`Próxima cobrança: ${dia}/${mes}/${ano}`);
+
+  }
+
+});
+
 $("#saveChargeLast").on('click', function(){
 
     $("#saveChargeLast").prop('disabled', true);
     $("#saveChargeLast").html('  Aguarde');
 
-     var dadosJson             = new Object();
-    dadosJson.charge_last_1    = $("#charge_last_1").val();
-    dadosJson.charge_last_2    = $("#charge_last_2").val();
-    dadosJson.charge_last_3    = $("#charge_last_3").val();
-    dadosJson.charge_last_4    = $("#charge_last_4").val();
-    dadosJson.active           = checkboxvalue("#charge_last");
+     var dadosJson              = new Object();
+     let last                   = 0;
+     let interval               = 0;
 
-    let last = true;
+     if(checkboxvalue("#charge_interval")){
+        interval                = 1;
+        dadosJson.type          = "charge_interval";
+        dadosJson.interval_days = $("#chargeInterval_interval_days").val();
+        dadosJson.max_send      = $("#chargeInterval_max_send").val();
+        dadosJson.next_date     = $("#chargeInterval_next_date").val();
+        dadosJson.active        = 1;
+     }else if(checkboxvalue("#charge_last")){
+        last                       = 1;
+        dadosJson.type             = 'charge_last';
+        dadosJson.charge_last_1    = $("#charge_last_1").val();
+        dadosJson.charge_last_2    = $("#charge_last_2").val();
+        dadosJson.charge_last_3    = $("#charge_last_3").val();
+        dadosJson.charge_last_4    = $("#charge_last_4").val();
+        dadosJson.active           = 1;
+     }
 
     var dados = JSON.stringify(dadosJson);
 
-     $.post(urlsite + '/panel/model/controller/charges/saveSetting.php', {dados, last}, function(data){
+     $.post(urlsite + '/panel/model/controller/charges/saveSetting.php', {dados, last, interval}, function(data){
 
         $("#saveChargeLast").prop('disabled', false);
         $("#saveChargeLast").html('Salvar');
@@ -2400,6 +2463,7 @@ function savePlan(){
     dadosJson.custo             = $("#custo_edit_plan").val();
     dadosJson.template_charge   = $("#template_charge_edit").val();
     dadosJson.template_sale     = $("#template_sale_edit").val();
+    dadosJson.template_late     = $("#template_late_edit").val();
     dadosJson.ciclo             = $("#ciclo_edit").val();
 
     const dados = JSON.stringify(dadosJson);
@@ -2441,6 +2505,7 @@ function edit_plan(idplan){
           $("#custo_edit_plan").val(obj.data.custo);
           $("#template_charge_edit").val(obj.data.template_charge);
           $("#template_sale_edit").val(obj.data.template_sale);
+          $("#template_late_edit").val(obj.data.template_late);
           $("#ciclo_edit").val(obj.data.ciclo);
 
           $("#modalEditPlan").modal('show');
@@ -2726,6 +2791,7 @@ function addPlan() {
     dadosJson.ciclo = $("#ciclo").val();
     dadosJson.template_charge = $("#template_charge").val();
     dadosJson.template_sale = $("#template_sale").val();
+    dadosJson.template_late = $("#template_late").val();
 
     const dados = JSON.stringify(dadosJson);
 
