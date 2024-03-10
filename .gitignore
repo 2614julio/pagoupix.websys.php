@@ -1,7 +1,7 @@
 /.idea
 /.vs
 /wip
-/database_template.sql
+database_template.sql
 /TODO.txt
 /vendor
 /public_html.zip
