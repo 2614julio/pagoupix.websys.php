@@ -5,7 +5,7 @@ date_default_timezone_set('America/Sao_Paulo');
 if ($_SERVER['SERVER_NAME'] == 'pagou.pix') {
     $dirname = ((object) pathinfo($_SERVER['SCRIPT_NAME']))->dirname;
     $dirname = str_replace('/panel', '', $dirname);
-    define('SITE_URL', 'http://' . $_SERVER['SERVER_NAME'] . $dirname);
+    define('SITE_URL', 'http://' . $_SERVER['SERVER_NAME']);
 } elseif ($_SERVER['SERVER_NAME'] == 'pagoupix.computatus.org')
     define('SITE_URL', 'https://pagoupix.computatus.org');
 else define('SITE_URL', 'https://pagoupix.com.br');

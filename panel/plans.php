@@ -91,29 +91,41 @@
                 </div>
         
                 
-               <div class="col-md-6">
+               <div class="col-md-12">
                   <div class="form-group">
-                      <label style="font-size:12px;" >Template de cobrança <span style="font-size:11px;" >(opcional)</span></label>
+                      <label style="font-size:12px;" >Template de cobrança </label>
                       	<select class="form-control" id="template_charge" name="">
                           <option value="0" >Selecionar template</option>
-                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ ?>
+                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "cobranca"){ ?>
                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
-                          <?php } } ?>
+                          <?php } } } ?>
                         </select>
                   </div>
                 </div>
                 
-                  <div class="col-md-6">
+                  <div class="col-md-12">
                   <div class="form-group">
-                      <label style="font-size:12px;" >Template de venda <span style="font-size:11px;" >(opcional)</span></label>
+                      <label style="font-size:12px;" >Template de venda </label>
                       	<select class="form-control" id="template_sale" name="">
                           <option value="0" >Selecionar template</option>
-                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ ?>
+                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "venda"){ ?>
                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
-                          <?php } } ?>
+                          <?php } } } ?>
                         </select>
                   </div>
                 </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label style="font-size:12px;" >Template de atraso</label>
+                          <select class="form-control" id="template_late" name="">
+                            <option value="0" >Selecionar template</option>
+                            <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "atraso"){ ?>
+                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
+                            <?php } } } ?>
+                          </select>
+                    </div>
+                  </div>
                 
             
                <?php if(!$get_templates){ ?>
@@ -130,6 +142,7 @@
 
                 <div class="col-md-12">
                   <div class="form-group">
+                        <label style="font-size:12px;" >Ciclo de pagamento</label>
                       	<select class="form-control" id="ciclo" name="">
                           <option value="semana" >Semanal</option>
                           <option value="mes" >Mensal</option>
@@ -190,29 +203,41 @@
                     </div>
                 </div>
                 
-             <div class="col-md-6">
+             <div class="col-md-12">
                   <div class="form-group">
-                      <label style="font-size:12px;" >Template de cobrança <span style="font-size:11px;" >(opcional)</span></label>
+                      <label style="font-size:12px;" >Template de cobrança</label>
                       	<select class="form-control" id="template_charge_edit" name="">
                           <option value="0" >Selecionar template</option>
-                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ ?>
+                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "cobranca"){ ?>
                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
-                          <?php } } ?>
+                          <?php } } } ?>
                         </select>
                   </div>
                 </div>
                 
-                  <div class="col-md-6">
-                  <div class="form-group">
-                      <label style="font-size:12px;" >Template de venda <span style="font-size:11px;" >(opcional)</span></label>
-                      	<select class="form-control" id="template_sale_edit" name="">
-                          <option value="0" >Selecionar template</option>
-                          <?php if($get_templates){ foreach($get_templates as $key => $tem){ ?>
-                           <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
-                          <?php } } ?>
-                        </select>
+                  <div class="col-md-12">
+                    <div class="form-group">
+                        <label style="font-size:12px;" >Template de venda</label>
+                          <select class="form-control" id="template_sale_edit" name="">
+                            <option value="0" >Selecionar template</option>
+                            <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "venda"){ ?>
+                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
+                            <?php } } } ?>
+                          </select>
+                    </div>
                   </div>
-                </div>
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                        <label style="font-size:12px;" >Template de atraso</label>
+                          <select class="form-control" id="template_late_edit" name="">
+                            <option value="0" >Selecionar template</option>
+                            <?php if($get_templates){ foreach($get_templates as $key => $tem){ if($tem->tipo == "atraso"){ ?>
+                            <option value="<?= $tem->id; ?>" ><?= $tem->nome; ?></option>
+                            <?php } } } ?>
+                          </select>
+                    </div>
+                  </div>
                 
             
                <?php if(!$get_templates){ ?>
@@ -226,6 +251,7 @@
 
                 <div class="col-md-12">
                   <div class="form-group">
+                        <label style="font-size:12px;" >Ciclo de pagamento</label>
                       	<select class="form-control" id="ciclo_edit" name="ciclo_edit" >
                           <option value="semana" >Semanal</option>
                           <option value="mes" >Mensal</option>

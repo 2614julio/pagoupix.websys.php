@@ -71,9 +71,11 @@ class Messages extends Conn{
 
     }
     
-   public function getTemplates(){
+   public function getTemplates($type=false){
 
-      $query_consult = $this->pdo->query("SELECT * FROM `templates_msg` WHERE client_id='$this->client_id' ORDER BY id DESC");
+      $and = $type ? " AND tipo = '{$type}' " : "";
+
+      $query_consult = $this->pdo->query("SELECT * FROM `templates_msg` WHERE client_id='$this->client_id' {$and} ORDER BY id DESC");
       $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
       if(count($fetch_consult)>0){
         return $fetch_consult;
