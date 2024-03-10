@@ -226,7 +226,7 @@
                                     </div>
 
                                     <div class="pl-3 col-md-6" id="check_options_charge_interval mb-3" >
-                                        <label style="color:#2c2c2c;font-size: 18px;cursor: pointer;" for="charge_interval" class="pb-0 mb-2 "  > <input <?php if(isset($setting_charge_interval->active)){ if($setting_charge_interval->active > 0){ echo 'checked';} } ?> type="checkbox" id="charge_interval" class="flipswitch active_charges_lasted" /> Cobranças agrecivas <i class="fa-solid fa-bolt"></i> </label>
+                                        <label style="color:#2c2c2c;font-size: 18px;cursor: pointer;" for="charge_interval" class="pb-0 mb-2 "  > <input <?php if(isset($setting_charge_interval->active)){ if($setting_charge_interval->active > 0){ echo 'checked';} } ?> type="checkbox" id="charge_interval" class="flipswitch active_charges_lasted" /> Cobranças agressivas <i class="fa-solid fa-bolt"></i> </label>
                                         <p>Cobrança será enviada sempre em um intervalo especifico de dias. (Inúmeras cobranças)</p>
                                     </div>
                                  </div>
