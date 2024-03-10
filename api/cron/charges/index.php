@@ -5,7 +5,7 @@
   // @DATE: 16/05/2023
   // api-whats.com
 
-  header("Content-type: application/json; charset=utf-8");
+ // header("Content-type: application/json; charset=utf-8");
   date_default_timezone_set('America/Sao_Paulo');
 
   if(isset($_REQUEST['url'])){
@@ -90,7 +90,7 @@
 
             // get signatures
             $signatures = $charges->getSignaturesExpire($date_now, $next_data, $uniq, $last_charge, $dates_lasted);
-
+            
             if($signatures){
                 
                 if($setting_charge->days_charge != "false"){
@@ -134,7 +134,7 @@
                                 $invoiceData                = $invoice->getInvoiceByid($invoiceAdd);
                                 $dadosInvoice->invoice_id   = $invoiceData->id;
 
-                                if($signature->expired > 0){
+                                if($signature->expired < 1){
                                     $template_message = $charges->getTemplateById($plan->template_charge);
                                 }else{
                                     $template_message = $charges->getTemplateById($plan->template_late);
