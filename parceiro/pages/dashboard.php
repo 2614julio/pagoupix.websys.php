@@ -7,7 +7,7 @@
     $getClientsByParceiro = $client->getClientsByParceiro();
     $getPixParceiro       = $client->getPixParceiro($_SESSION['CLIENT']['id']);
     $getPinByParceiro     = $comprovante_c->getPinByParceiro($_SESSION['CLIENT']['id']);
-    
+
   
  ?>
 
@@ -131,6 +131,7 @@
                                                     <th>Nome</th>
                                                     <th>E-mail</th>
                                                     <th>Vencimento</th>
+                                                    <th>Cadastro</th>
                                                     <th>Instancia Whatsapp</th>
                                                     <th>Enviar cobrança</th>
                                                     <?php if($dadosClient->adm == 1){ ?>
@@ -144,6 +145,7 @@
                                                     <th>Nome</th>
                                                     <th>E-mail</th>
                                                     <th>Vencimento</th>
+                                                    <th>Cadastro</th>
                                                     <th>Instancia Whatsapp</th>
                                                     <th>Enviar cobrança</th>
                                                     <?php if($dadosClient->adm == 1){ ?>
@@ -166,7 +168,8 @@
                                                 <tr>
                                                     <td><?= $client_info->nome; ?></td>
                                                     <td><?= $client_info->email; ?></td>
-                                                    <td><?= date('d/m/Y H:i', $client_info->due_date); ?></td>
+                                                    <td><?= date('Y/m/d H:i', $client_info->due_date); ?></td>
+                                                    <td><?= date('Y/m/d', strtotime($client_info->create_account)); ?></td>
                                                     <td>
                                                         <?php if($getInstanceByClient){ ?>
                                                             <?= $getInstanceByClient->status == "connected" ? "<b class='text-success' >Conectado</b>" : "<b class='text-danger' >Desconectado</b>" ?>
@@ -245,13 +248,13 @@
     <!-- Page level custom scripts -->
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
-    
-        <!-- Page level plugins -->
+
+    <!-- Page level plugins -->
     <script src="vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/datatables-demo.js"></script>
+    <script src="js/demo/datatables-demo-dashboard.js?v=1.0.13"></script>
     
         
    <?php if($dadosClient->adm == 1){ ?>

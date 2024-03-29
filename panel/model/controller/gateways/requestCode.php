@@ -33,6 +33,7 @@ class RequestCode extends Conn {
             '{{user_name}}' => $client_info->nome != "" && $client_info->nome != NULL ? explode(' ', $client_info->nome)[0] : utf8_decode('Usuário'),
             '{{code}}'      => $code_confirmation
         ];
+
         $email->sendMail();
 
         if ($email->erro) {
