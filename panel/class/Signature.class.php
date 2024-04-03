@@ -3,17 +3,15 @@
  /**
  * Signature
  */
-class Signature extends Conn{
+class Signature extends Conn {
 
-
-  function __construct($id=0){
+  function __construct($id=0) {
     $this->conn      = new Conn;
     $this->pdo       = $this->conn->pdo();
     $this->client_id = $id;
   }
 
-    public function addClient($dados){
-        
+  public function addClient($dados) {
 
       if(!isset($dados->cpf)){
           $dados->cpf = NULL;
@@ -57,50 +55,50 @@ class Signature extends Conn{
 
     }
     
-    public function renew($id,$ciclo){
+  public function renew($id,$ciclo, $plans = null, $invoice = null) {
+    $array_clico = [
+      'semana'    => '7 days',
+      'mes'       => '1 month',
+      'bimestre'  => '2 months',
+      'trimestre' => '3 months',
+      'semestre'  => '6 months',
+      'ano'       => '1 year'
+    ];
+
+    if (!isset($array_clico[$ciclo])) return false;
         
-        $array_clico = array(
-                'semana'      => '7 days',
-                'mes'         => '1 month',
-                'bimestre'    => '2 months',
-                'trimestre'   => '3 months',
-                'semestre'    => '6 months',
-                'ano'         => '1 year'
-        );
-        
-     if(!isset($array_clico[$ciclo])){
-         return false;
-     }
-        
-      $getClientByid = self::getClientByid($id);
-    
-      if($getClientByid){
-          
-          $expire_date = strtotime($getClientByid->expire_date);
-          
-          if( strtotime('now') > $expire_date || strtotime('now') == $expire_date){
-              // data a partir de hoje
-              $new_expire_date = date('Y-m-d', strtotime('+'. $array_clico[$ciclo] , strtotime('now') ) );
-          }else{
-              // data baseado no user
-              $new_expire_date = date('Y-m-d', strtotime('+'. $array_clico[$ciclo] , $expire_date ) );
-          }
-          
-          $query = $this->pdo->prepare("UPDATE `assinante` SET expire_date=:expire_date WHERE id=:id AND client_id=:client_id");
-          $query->bindValue(':expire_date', $new_expire_date);
-          $query->bindValue(':id', $id);
-          $query->bindValue(':client_id', $this->client_id);
-    
-          if($query->execute()){
-            return true;
-          }else{
-            return false;
-          }
-          
-      }else{
-          return false;
-      }
+    $getClientByid = self::getClientByid($id);
+
+    $temporario = 0;
+    if ($plans && $invoice) {
+      $plan = $plans->getPlanByid($invoice->plan_id);
+      $temporario = $plan->temporario;
     }
+
+    if ($getClientByid && $temporario == '0') {
+
+      $expire_date = strtotime($getClientByid->expire_date);
+
+      //if (strtotime('now') > $expire_date || strtotime('now') == $expire_date) {
+      //  data a partir de hoje
+      //  $new_expire_date = date('Y-m-d', strtotime('+'. $array_clico[$ciclo] , strtotime('now') ) );
+      //}
+      //else {
+      //  data baseado no user
+      $new_expire_date = date('Y-m-d', strtotime('+'. $array_clico[$ciclo] , $expire_date ) );
+      //}
+
+
+      $query = $this->pdo->prepare("UPDATE `assinante` SET expire_date=:expire_date WHERE id=:id AND client_id=:client_id");
+      $query->bindValue(':expire_date', $new_expire_date);
+      $query->bindValue(':id', $id);
+      $query->bindValue(':client_id', $this->client_id);
+    
+      return $query->execute();
+          
+    }
+    else return false;
+  }
     
     public function searchByMail($mail){
         
