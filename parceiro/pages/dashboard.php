@@ -162,9 +162,7 @@
                                                   
                                                   
                                                    $getInstanceByClient = $client->getInstanceByClient($client_info->id);
-
-                                                   var_dump($client_info);
-
+                                                  
                                                   ?>
                                                 
                                                 <tr>

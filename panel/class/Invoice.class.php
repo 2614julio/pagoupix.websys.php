@@ -92,7 +92,7 @@ class Invoice extends Conn{
     
     public function getInvoiceOpen($signature){
         
-          $query_consult = $this->pdo->query("SELECT * FROM `invoices` WHERE id_assinante='{$signature}' AND status = 'pending' ORDER BY id ASC LIMIT 1 ");
+          $query_consult = $this->pdo->query("SELECT * FROM `invoices` WHERE id_assinante='{$signature}' AND status = 'pending' ORDER BY id DESC LIMIT 1 ");
           $fetch_consult = $query_consult->fetchAll(PDO::FETCH_OBJ);
           if(count($fetch_consult)>0){
             return $fetch_consult[0];
