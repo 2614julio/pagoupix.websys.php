@@ -1,6 +1,8 @@
 <?php
+
 if ($_SERVER['SERVER_NAME'] != 'pagou.pix') {
- define('HOSTNAME', 'localhost');
+ //define('HOSTNAME', 'localhost');
+ define('HOSTNAME', '177.234.154.35'); 
  define('USERNAME', 'pagoupix_sistema');
  define('PASSWORD', 'AgVYfg3kBF6G');
  define('DATABASE', 'pagoupix_sistema');
